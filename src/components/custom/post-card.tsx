@@ -3,12 +3,6 @@
 import { cn } from '@/lib/utils'
 import { type Post } from '@/types/post'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
-import {
-  differenceInDays,
-  differenceInHours,
-  differenceInMinutes
-} from 'date-fns'
-import getTimeDifference from '@/functions/get-time-diff'
 import { calculateTimeDiffWithUnit } from '@/functions/calculate-time-diff-with-unit'
 import Link from 'next/link'
 import { hrefs } from '@/constants/hrefs'
@@ -39,7 +33,7 @@ export default function PostCard ({
           '',
           orientation === 'vertical'
             ? 'w-full'
-            : 'xs:h-24 h-16 aspect-video shrink-0'
+            : 'lg:h-24 h-16 aspect-video shrink-0'
         )}
       >
         <div className={cn('w-full aspect-video rounded bg-red-400')} />
