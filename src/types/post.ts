@@ -6,3 +6,5 @@ export type Post = {
   username: string
   timestamp: string
 }
+
+export type Orientation = 'vertical' | 'horizontal' | 'adjust'

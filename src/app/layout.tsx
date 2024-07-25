@@ -5,7 +5,10 @@ import './globals.css'
 import { Navbar, NavigationHelper } from '@/components/custom'
 
 const inter = Inter({ subsets: ['latin'] })
-const roboto = Roboto({ weight: ['400', '700'], subsets: ['latin'] })
+const roboto = Roboto({
+  weight: ['100', '300', '400', '500', '700'],
+  subsets: ['latin']
+})
 
 export const metadata: Metadata = {
   title: 'Short Films',
@@ -13,9 +16,11 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout ({
-  children
+  children,
+  post
 }: {
   children: React.ReactNode
+  post: React.ReactNode
 }) {
   return (
     <>
@@ -29,9 +34,11 @@ export default function RootLayout ({
             disableTransitionOnChange
           >
             <Navbar />
-            <div className='h-[calc(100%-64px)] overflow-y-auto'>
+            <div className='h-[calc(100%-64px)] overflow-y-scroll scroller relative'>
               {children}
+              {post}
             </div>
+
             <NavigationHelper />
           </ThemeProvider>
         </body>

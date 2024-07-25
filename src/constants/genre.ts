@@ -10,23 +10,23 @@ export const repetitive_sample_posts = [
 export const posts_with_genre: { title: string; posts: Post[] }[] = [
   {
     title: 'Action',
-    posts: repetitive_sample_posts
+    posts: sample_posts
   },
   {
     title: 'Comedy',
-    posts: repetitive_sample_posts
+    posts: sample_posts
   },
   {
     title: 'Drama',
-    posts: repetitive_sample_posts
+    posts: sample_posts
   },
   {
     title: 'Horror',
-    posts: repetitive_sample_posts
+    posts: sample_posts
   },
   {
     title: 'Thriller',
-    posts: repetitive_sample_posts
+    posts: sample_posts
   }
 ]
 

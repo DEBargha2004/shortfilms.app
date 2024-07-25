@@ -25,7 +25,11 @@ export const PostCardContainer = forwardRef<
 >(({ className, children, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('w-full flex gap-2', 'overflow-y-auto', className)}
+    className={cn(
+      'w-full grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-2',
+      '',
+      className
+    )}
     {...props}
   >
     {children}
