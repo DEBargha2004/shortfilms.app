@@ -12,7 +12,8 @@ import { templateClass } from '@/constants/template-class'
 export default function PostCard ({
   post,
   className,
-  orientation = 'vertical'
+  orientation = 'vertical',
+  hideAvatar
 }: {
   post: Post
   className?: string
@@ -29,19 +30,23 @@ export default function PostCard ({
         <div className={cn('w-full aspect-video rounded bg-red-400')} />
       </Link>
       <div className='w-full flex justify-between gap-3 items-start'>
-        <Avatar
-          className={cn(
-            'w-8 h-8',
-            orientation === 'vertical'
-              ? 'block'
-              : orientation === 'horizontal'
-              ? 'hidden'
-              : 'lg:hidden block'
-          )}
-        >
-          <AvatarImage />
-          <AvatarFallback>JD</AvatarFallback>
-        </Avatar>
+        <Link href={hrefs.user(post.username)}>
+          <Avatar
+            className={cn(
+              'w-8 h-8',
+              hideAvatar
+                ? 'hidden'
+                : orientation === 'vertical'
+                ? 'block'
+                : orientation === 'horizontal'
+                ? 'hidden'
+                : 'lg:hidden block'
+            )}
+          >
+            <AvatarImage />
+            <AvatarFallback>JD</AvatarFallback>
+          </Avatar>
+        </Link>
 
         <div className='w-full flex flex-col justify-start items-start'>
           <h2
@@ -54,16 +59,18 @@ export default function PostCard ({
           >
             {post.title}
           </h2>
-          <p
-            className={cn(
-              'opacity-60',
-              orientation === 'vertical'
-                ? '@lg:text-base text-sm '
-                : '@lg:text-base text-sm'
-            )}
-          >
-            {post.username}
-          </p>
+          <Link href={hrefs.user(post.username)}>
+            <p
+              className={cn(
+                'opacity-60',
+                orientation === 'vertical'
+                  ? '@lg:text-base text-sm '
+                  : '@lg:text-base text-sm'
+              )}
+            >
+              {post.username}
+            </p>
+          </Link>
           <div
             className={cn(
               'flex justify-start items-center gap-2 [&>p]:opacity-60',

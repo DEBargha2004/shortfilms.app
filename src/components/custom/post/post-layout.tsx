@@ -7,7 +7,7 @@ export const PostLayout = forwardRef<
 >(({ children, className, ...props }, ref) => (
   <div
     className={cn(
-      'w-full h-full absolute top-0 left-0 px-3 py-2 dark:bg-black bg-white',
+      'w-full h-full absolute top-0 left-0 px-3 py-2',
       'flex lg:flex-row flex-col items-stretch lg:items-start justify-start lg:justify-center gap-5',
       className
     )}

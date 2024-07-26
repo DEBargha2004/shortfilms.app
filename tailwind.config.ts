@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import plugin from 'tailwindcss/plugin'
 
 const config = {
   darkMode: ['class'],
@@ -83,7 +84,14 @@ const config = {
   },
   plugins: [
     require('tailwindcss-animate'),
-    require('@tailwindcss/container-queries')
+    require('@tailwindcss/container-queries'),
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        '.display-inherit': {
+          display: 'inherit'
+        }
+      })
+    })
   ]
 } as Config
 

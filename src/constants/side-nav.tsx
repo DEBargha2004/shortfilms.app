@@ -8,23 +8,24 @@ import {
   Home,
   ListVideo
 } from 'lucide-react'
+import { hrefs } from './hrefs'
 
 export const sideNavMiniViewItems: SideNavItem[] = [
   {
     type: 'app-section-link',
     title: 'Home',
-    href: '/',
+    href: hrefs.home,
     Icon: Home
   },
   {
     type: 'app-section-link',
     title: 'Explore',
-    href: '/explore',
+    href: hrefs.explore,
     Icon: Compass
   },
   {
-    type: 'app-section-icon',
-    Icon: ({ className, ...props }) => (
+    type: 'app-section-element',
+    Element: ({ className, ...props }) => (
       <div
         className={cn('w-full grid place-content-center', className)}
         {...props}
@@ -36,13 +37,13 @@ export const sideNavMiniViewItems: SideNavItem[] = [
   {
     type: 'app-section-link',
     title: 'Subscriptions',
-    href: '/subscriptions',
+    href: hrefs.subscriptions,
     Icon: ListVideo
   },
   {
     type: 'app-section-link',
     title: 'Library',
-    href: '/library',
+    href: hrefs.library,
     Icon: Film
   }
 ]
@@ -51,14 +52,20 @@ export const sideNavFullViewItems: SideNavItem[] = [
   {
     type: 'app-section-link',
     title: 'Home',
-    href: '/',
+    href: hrefs.home,
     Icon: Home
   },
   {
     type: 'app-section-link',
-    title: 'Short Films',
-    href: '/shortfilms',
+    title: 'Shorts',
+    href: hrefs.shorts,
     Icon: Clapperboard
+  },
+  {
+    type: 'app-section-link',
+    title: 'Subscriptions',
+    href: hrefs.subscriptions,
+    Icon: ListVideo
   },
   {
     type: 'separator'

@@ -17,9 +17,9 @@ export type SideNavItem =
       catchRoutes?: string[]
     }
   | {
-      type: 'app-section-icon'
+      type: 'app-section-element'
       href?: string
-      Icon: React.FC<HTMLProps<HTMLDivElement>>
+      Element: React.FC<HTMLProps<HTMLDivElement>>
     }
   | {
       type: 'app-section-item'
