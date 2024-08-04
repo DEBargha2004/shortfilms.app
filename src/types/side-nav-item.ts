@@ -1,5 +1,5 @@
 import { HTMLProps } from 'react'
-import { Icon } from './icon'
+import { Icon, IconProps } from './icon'
 
 export type SideNavItem =
   | {
@@ -19,7 +19,7 @@ export type SideNavItem =
   | {
       type: 'app-section-element'
       href?: string
-      Element: React.FC<HTMLProps<HTMLDivElement>>
+      Element: React.FC<{ iconProps?: IconProps } & HTMLProps<HTMLDivElement>>
     }
   | {
       type: 'app-section-item'

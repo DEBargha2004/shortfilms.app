@@ -20,7 +20,7 @@ export default function Navbar () {
     isSidebarMinimized
   } = useGlobalAppStore()
   return (
-    <div className='h-16 w-full lg:px-4 px-1 flex justify-between items-center gap-2'>
+    <div className='h-16 w-full md:px-4 px-2 flex justify-between items-center gap-2'>
       <div className='flex justify-start items-center gap-2'>
         <Button
           variant={'outline'}

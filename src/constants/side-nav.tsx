@@ -19,18 +19,27 @@ export const sideNavMiniViewItems: SideNavItem[] = [
   },
   {
     type: 'app-section-link',
+    title: 'Content',
+    href: hrefs.content,
+    Icon: Clapperboard
+  },
+  {
+    type: 'app-section-link',
     title: 'Explore',
     href: hrefs.explore,
     Icon: Compass
   },
   {
     type: 'app-section-element',
-    Element: ({ className, ...props }) => (
+    Element: ({ className, iconProps, ...props }) => (
       <div
         className={cn('w-full grid place-content-center', className)}
         {...props}
       >
-        <CirclePlus className='w-10 h-10 font-extralight' />
+        <CirclePlus
+          className={cn('w-10 h-10 font-extralight', iconProps?.className)}
+          {...iconProps}
+        />
       </div>
     )
   },

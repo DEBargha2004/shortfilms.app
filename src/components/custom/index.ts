@@ -10,6 +10,7 @@ import NavigationHelper from './navigation-helper'
 import ProductLogo from './product-logo'
 import { SearchInput } from './search-input'
 import NotificationBell from './notification-bell'
+import ContentList from './content-list'
 
 export {
   Navbar,
@@ -22,5 +23,6 @@ export {
   NavigationHelper,
   ProductLogo,
   SearchInput,
-  NotificationBell
+  NotificationBell,
+  ContentList
 }

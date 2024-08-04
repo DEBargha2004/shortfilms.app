@@ -53,11 +53,11 @@ export function BottomNavMiniView ({
       {sideNavMiniViewItems.map((item, item_idx) => (
         <React.Fragment key={item_idx}>
           {item.type === 'app-section-link' && (
-            <Link href={item.href} className='block sm:w-fit w-1/5 '>
+            <Link href={item.href} className='block sm:w-fit w-full shrink'>
               <SideNavItem
                 renderType='mini'
                 label={item.title}
-                className='gap-1 sm:w-20 w-full rounded-sm'
+                className='gap-1 sm:w-20 w-full rounded-sm sm:px-4 px-0'
                 selected={
                   item.catchRoutes
                     ? item.catchRoutes.includes(pathname)
@@ -75,11 +75,11 @@ export function BottomNavMiniView ({
           {item.type === 'app-section-element' && (
             <Link
               href={item.href ?? ''}
-              className='inline-block sm:w-fit w-1/5 sm:shrink shrink-0'
+              className='inline-block sm:w-fit w-full'
             >
               <SideNavItem
                 renderType='mini'
-                className='gap-1 sm:w-20 w-full rounded-sm'
+                className='gap-1 sm:w-20 w-full rounded-sm sm:px-4 px-0'
                 disableTooltip
               >
                 {<item.Element />}
@@ -101,10 +101,7 @@ export function SideNavMiniView ({
       {sideNavMiniViewItems.map((item, item_idx) => (
         <React.Fragment key={item_idx}>
           {item.type === 'app-section-link' && (
-            <Link
-              href={item.href}
-              className='block sm:w-fit w-1/5 sm:shrink shrink-0'
-            >
+            <Link href={item.href} className='block sm:w-fit w-full'>
               <SideNavItem
                 renderType='mini'
                 label={item.title}
@@ -119,6 +116,20 @@ export function SideNavMiniView ({
                 <SideNavItemLabel className='text-xs'>
                   {item.title}
                 </SideNavItemLabel>
+              </SideNavItem>
+            </Link>
+          )}
+          {item.type === 'app-section-element' && (
+            <Link
+              href={item.href ?? ''}
+              className='inline-block sm:w-fit w-full'
+            >
+              <SideNavItem
+                renderType='mini'
+                className='gap-1 sm:w-20 w-full rounded-sm'
+                disableTooltip
+              >
+                {<item.Element iconProps={{ className: 'h-8 w-8' }} />}
               </SideNavItem>
             </Link>
           )}

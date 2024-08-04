@@ -6,5 +6,6 @@ export const hrefs = {
   shorts: '/shorts',
   subscriptions: '/subscriptions',
   library: '/library',
-  explore: '/explore'
+  explore: '/explore',
+  content: '/content'
 } as const
