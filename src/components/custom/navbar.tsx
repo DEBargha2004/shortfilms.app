@@ -11,6 +11,11 @@ import NotificationBell from "./notification-bell";
 import { useGlobalAppStore } from "@/store/global-app-store";
 import Link from "next/link";
 import { hrefs } from "@/constants/hrefs";
+import { usePathname } from "next/navigation";
+import { useMemo } from "react";
+import { pagesWithoutSideNav } from "@/constants/pages";
+import micromatch from "micromatch";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
   const {
@@ -19,12 +24,22 @@ export default function Navbar() {
     setIsSidebarMinimized,
     isSidebarMinimized,
   } = useGlobalAppStore();
+  const pathname = usePathname();
+
+  const showOnlySideNavSheet = useMemo(() => {
+    return pagesWithoutSideNav.some((page) =>
+      micromatch.isMatch(pathname, page)
+    );
+  }, [pathname]);
+
   return (
     <div className="h-16 w-full md:px-4 px-2 flex justify-between items-center gap-2">
       <div className="flex justify-start items-center gap-2">
         <Button
           variant={"outline"}
-          className="px-1.5 h-3/4 lg:block hidden"
+          className={cn(
+            showOnlySideNavSheet ? "hidden" : "px-1.5 h-3/4 lg:block hidden"
+          )}
           onClick={() => setIsSidebarMinimized(!isSidebarMinimized)}
         >
           <Menu className="h-5" />
@@ -33,7 +48,10 @@ export default function Navbar() {
           <SheetTrigger asChild>
             <Button
               variant={"outline"}
-              className="px-1.5 h-3/4 lg:hidden block"
+              className={cn(
+                "px-1.5 h-3/4 ",
+                showOnlySideNavSheet ? "block" : "lg:hidden block"
+              )}
             >
               <Menu className="h-5" />
             </Button>

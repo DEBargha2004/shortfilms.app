@@ -11,27 +11,26 @@ import {
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Option } from "@/types/option";
 import type { Icon } from "@/types/icon";
-import { Delete, Edit, Eye, MoreVertical } from "lucide-react";
+import { Edit, Eye, MoreVertical, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
 const info_options: (Option & { Icon: Icon })[] = [
   { label: "Edit", value: "edit", Icon: Edit },
   { label: "View", value: "view", Icon: Eye },
-  { label: "Delete", value: "delete", Icon: Delete },
+  { label: "Delete", value: "delete", Icon: Trash2 },
 ];
 
 export default function TableItem() {
-  const [showLiked, setShowLiked] = useState(false);
   return (
     <TableRow className="hover:bg-muted/50">
       <TableCell className="sm:p-2 px-0 w-fit">
-        <div className="lg:h-[150px] lg:w-[150px] h-[80px] w-[80px]">
+        <div className="lg:h-[150px] lg:w-[150px] h-[80px] w-[80px] grid place-items-center">
           <Image
             src="https://cdnb.artstation.com/p/assets/images/images/000/424/193/smaller_square/glenn-melenhorst-car0001.jpg?1443927098"
             height={150}
             width={150}
-            className="h-full aspect-square object-cover"
+            className="w-full aspect-video object-cover"
             alt="gallery-image"
           />
         </div>
@@ -62,7 +61,7 @@ export default function TableItem() {
           <DropdownMenuContent align="end">
             {info_options.map((item) => (
               <DropdownMenuItem key={item.value}>
-                <item.Icon className="mr-2" />
+                <item.Icon className="mr-2 h-4" />
                 {item.label}
               </DropdownMenuItem>
             ))}

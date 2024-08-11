@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import {
-  Delete,
   Edit,
   Eye,
   ListFilter,
   PlusCircle,
   Search,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -47,16 +47,10 @@ const filter: FieldType[] = [
   { label: "Oldest", value: "oldest" },
 ];
 
-const info_options: (FieldType & { Icon: Icon })[] = [
-  { label: "Edit", value: "edit", Icon: Edit },
-  { label: "View", value: "view", Icon: Eye },
-  { label: "Delete", value: "delete", Icon: Delete },
-];
-
 export default function Content() {
   const [selectedFilter, setSelectedFilter] = useState(filter[0].value);
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex h-full w-full flex-col overflow-y-auto scroller">
       <div className="flex flex-col sm:gap-4 sm:p-0 p-1">
         <main className="grid flex-1 items-start gap-4 sm:py-0 md:gap-8">
           <Tabs defaultValue="all">
@@ -103,7 +97,7 @@ export default function Content() {
                         </span>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-accent">
+                    <DropdownMenuContent align="end" className="bg-card">
                       <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       {filter.map((item) => (
@@ -124,7 +118,7 @@ export default function Content() {
             <TabsContent value="all">
               <Card x-chunk="dashboard-06-chunk-0" className="bg-card">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-xl">Gallery Posts</CardTitle>
+                  <CardTitle className="text-xl">Content</CardTitle>
                   <CardDescription>
                     Manage your posts and view their performance.
                   </CardDescription>
