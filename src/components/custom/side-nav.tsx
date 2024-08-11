@@ -7,7 +7,7 @@ import {
 } from "@/constants/side-nav";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import React, { forwardRef, HTMLProps } from "react";
+import React, { forwardRef, HTMLProps, useEffect, useState } from "react";
 import { Separator } from "../ui/separator";
 import {
   Tooltip,
@@ -17,12 +17,14 @@ import {
 } from "../ui/tooltip";
 import { usePathname } from "next/navigation";
 import { useGlobalAppStore } from "@/store/global-app-store";
+import { useRenderCount } from "@uidotdev/usehooks";
 
 export default function SideNav({
   className,
   ...props
 }: {} & HTMLProps<HTMLDivElement>) {
-  const { isSidebarMinimized } = useGlobalAppStore();
+  let { isSidebarMinimized } = useGlobalAppStore();
+
   return (
     <div
       className={cn("md:h-full md:w-fit w-full overflow-y-auto", className)}

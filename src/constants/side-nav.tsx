@@ -93,6 +93,12 @@ export const sideNavFullViewItems: SideNavItem[] = [
   },
   {
     type: "app-section-link",
+    title: "Content",
+    href: hrefs.content,
+    Icon: Clapperboard,
+  },
+  {
+    type: "app-section-link",
     title: "Shorts",
     href: hrefs.shorts,
     Icon: Clapperboard,

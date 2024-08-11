@@ -1,8 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    remotePatterns: []
-  }
+    remotePatterns: [
+      {
+        hostname:'cdnb.artstation.com'
+      }
+    ]
+  },
 }
 
 export default nextConfig

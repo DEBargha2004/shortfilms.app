@@ -2,7 +2,7 @@
 
 import { useGlobalAppStore } from "@/store/global-app-store";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { usePrevious, useWindowSize } from "@uidotdev/usehooks";
 
 export default function NavigationHelper() {
@@ -11,7 +11,6 @@ export default function NavigationHelper() {
   const windowDimension = useWindowSize();
   const previousWindowDimension = usePrevious(windowDimension);
   const pathname = usePathname();
-  const firstRender = useRef(false);
 
   useEffect(() => {
     setIsSideNavOpen(false);
@@ -36,12 +35,14 @@ export default function NavigationHelper() {
     }
   }, [windowDimension, previousWindowDimension]);
 
+  // useEffect(() => {
+  //   setIsSidebarMinimized(true);
+  // }, []);
+
   useEffect(() => {
-    if (windowDimension?.width! <= 1080 && !firstRender.current) {
-      firstRender.current = true;
-      setIsSidebarMinimized(true);
-    }
-  }, [windowDimension]);
+    localStorage.setItem("isSidebarMinimized", String(isSidebarMinimized));
+    console.log("isSidebarMinimized", isSidebarMinimized);
+  }, [isSidebarMinimized]);
 
   return null;
 }
