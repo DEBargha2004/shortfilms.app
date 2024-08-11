@@ -26,10 +26,7 @@ export default function SideNav({
   let { isSidebarMinimized } = useGlobalAppStore();
 
   return (
-    <div
-      className={cn("md:h-full md:w-fit w-full overflow-y-auto", className)}
-      {...props}
-    >
+    <div className={cn(" overflow-y-auto", className)} {...props}>
       <SideNavMiniView
         className={cn(
           "hidden",
