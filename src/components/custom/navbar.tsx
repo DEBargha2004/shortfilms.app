@@ -38,7 +38,7 @@ export default function Navbar() {
         <Button
           variant={"outline"}
           className={cn(
-            showOnlySideNavSheet ? "hidden" : "px-1.5 h-3/4 lg:block hidden"
+            showOnlySideNavSheet ? "hidden" : "px-1.5 h-3/4 md:block hidden"
           )}
           onClick={() => setIsSidebarMinimized(!isSidebarMinimized)}
         >
@@ -50,7 +50,7 @@ export default function Navbar() {
               variant={"outline"}
               className={cn(
                 "px-1.5 h-3/4 ",
-                showOnlySideNavSheet ? "block" : "lg:hidden block"
+                showOnlySideNavSheet ? "block" : "md:hidden block"
               )}
             >
               <Menu className="h-5" />

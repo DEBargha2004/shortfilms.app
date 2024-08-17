@@ -17,7 +17,6 @@ import {
 } from "../ui/tooltip";
 import { usePathname } from "next/navigation";
 import { useGlobalAppStore } from "@/store/global-app-store";
-import { useRenderCount } from "@uidotdev/usehooks";
 
 export default function SideNav({
   className,

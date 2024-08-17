@@ -64,7 +64,7 @@ export default function Content() {
                 </TabsList>
               </div>
               <div className="flex justify-between items-center gap-2 w-full">
-                <Link href={""} className=" inline">
+                <Link href={"/content/create"} className=" inline">
                   <Button
                     size="sm"
                     variant={"success"}

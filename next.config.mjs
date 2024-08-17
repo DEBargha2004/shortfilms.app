@@ -3,10 +3,11 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname:'cdnb.artstation.com'
-      }
-    ]
+        hostname: "cdnb.artstation.com",
+      },
+    ],
   },
-}
+  reactStrictMode: false,
+};
 
-export default nextConfig
+export default nextConfig;
