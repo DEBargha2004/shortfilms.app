@@ -200,14 +200,11 @@ export default function Page() {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="grid gap-4 @4xl:grid-cols-3 @6xl:grid-cols-[1fr_400px] lg:gap-8"
+                className="grid gap-4 @4xl:grid-cols-3 lg:gap-8"
               >
-                <div className="grid auto-rows-max items-start gap-4 @4xl:col-span-2 @6xl:col-span-1 lg:gap-8">
+                <div className="grid auto-rows-max items-start gap-4 @4xl:col-span-2 @7xl:col-span-2 lg:gap-8">
                   <Card className="@container">
-                    <CardHeader>
-                      <CardTitle>Basic Details</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-4 pt-4">
                       <FormField
                         control={form.control}
                         name="title"
@@ -238,10 +235,7 @@ export default function Page() {
                     </CardContent>
                   </Card>
                   <Card className="@container">
-                    <CardHeader>
-                      <CardTitle>Video Content</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-4 pt-4">
                       <FormField
                         control={form.control}
                         name="video"
@@ -458,10 +452,7 @@ export default function Page() {
                     </CardContent>
                   </Card>
                   <Card>
-                    <CardHeader>
-                      <CardTitle>Monetization Options</CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                    <CardContent className="space-y-4 pt-4">
                       <FormField
                         control={form.control}
                         name="isPaid"
@@ -477,13 +468,6 @@ export default function Page() {
                           </FormItem>
                         )}
                       />
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Playlist Management</CardTitle>
-                    </CardHeader>
-                    <CardContent>
                       <FormField
                         control={form.control}
                         name="playlist"
@@ -502,13 +486,6 @@ export default function Page() {
                           </FormItem>
                         )}
                       />
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Content Tags</CardTitle>
-                    </CardHeader>
-                    <CardContent>
                       <FormField
                         control={form.control}
                         name="tags"
@@ -530,12 +507,9 @@ export default function Page() {
                     </CardContent>
                   </Card>
                 </div>
-                <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
+                <div className="grid @7xl:w-4/5 auto-rows-max items-start gap-4 lg:gap-8">
                   <Card>
-                    <CardHeader>
-                      <CardTitle>Thumbnail Settings</CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                    <CardContent className="pt-4">
                       <input
                         type="file"
                         {...thumbnailDropzone.getInputProps()}
@@ -659,10 +633,7 @@ export default function Page() {
                     </CardFooter>
                   </Card>
                   <Card>
-                    <CardHeader>
-                      <CardTitle>Publishing Options</CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                    <CardContent className="pt-4">
                       <FormField
                         control={form.control}
                         name="publishToSocialNetworks"

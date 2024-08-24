@@ -36,7 +36,10 @@ export default function SideNav({
       />
       <BottomNavMiniView className="md:hidden flex justify-center items-center sm:gap-6 gap-1" />
       <SideNavFullView
-        className={cn("hidden", isSidebarMinimized ? "md:hidden" : "md:block")}
+        className={cn(
+          "hidden w-40",
+          isSidebarMinimized ? "md:hidden" : "md:block"
+        )}
       />
     </div>
   );
@@ -141,7 +144,7 @@ export function SideNavFullView({
 }: {} & HTMLProps<HTMLDivElement>) {
   const pathname = usePathname();
   return (
-    <div className={cn("w-60 space-y-1", className)} {...props}>
+    <div className={cn(" space-y-1", className)} {...props}>
       {sideNavFullViewItems.map((item, item_idx) => (
         <React.Fragment key={item_idx}>
           {item.type === "app-section-link" && (
