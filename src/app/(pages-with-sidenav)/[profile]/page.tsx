@@ -1,4 +1,4 @@
-import { PostCard } from "@/components/custom/post";
+import PostCard from "@/components/custom/post/post-card";
 import { repetitive_sample_posts } from "@/constants/genre";
 
 export default function Page({

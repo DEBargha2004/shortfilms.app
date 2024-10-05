@@ -16,6 +16,8 @@ export const postCreateSchema = z.object({
   tags: z.array(z.string()),
   thumbnail: z.string(),
   publishToSocialNetworks: z.boolean(),
+  publisherType: z.string(),
+  members: z.array(z.string()),
 });
 
 export type PostCreateSchema = z.infer<typeof postCreateSchema>;

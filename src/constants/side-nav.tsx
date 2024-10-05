@@ -11,12 +11,12 @@ import {
 import { hrefs } from "./hrefs";
 
 export const bottomNavMiniViewItems: SideNavItem[] = [
-  {
-    type: "app-section-link",
-    title: "Home",
-    href: hrefs.home,
-    Icon: Home,
-  },
+  // {
+  //   type: "app-section-link",
+  //   title: "Home",
+  //   href: hrefs.home,
+  //   Icon: Home,
+  // },
   {
     type: "app-section-link",
     title: "Content",

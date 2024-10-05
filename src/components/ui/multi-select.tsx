@@ -11,20 +11,17 @@ import {
 } from "@/components/ui/command";
 import { Command as CommandPrimitive } from "cmdk";
 
-type MultiSelectItemProps = {
-  value: string;
-  label: string;
-};
+type MultiSelectItemProps = string;
 
 function MultiSelect({
   options,
-  selectedValues,
+  values,
   onValueChange,
   placeholder = "Select options",
 }: {
   options: MultiSelectItemProps[];
-  selectedValues: string[];
-  onValueChange: (values: string[]) => void;
+  values: MultiSelectItemProps[];
+  onValueChange: (values: MultiSelectItemProps[]) => void;
   placeholder?: string;
 }) {
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -34,30 +31,27 @@ function MultiSelect({
   const [inputValue, setInputValue] = React.useState("");
 
   const selectables = React.useMemo(() => {
-    return options.filter((o) => !selected.some((s) => s?.value === o.value));
+    return options.filter((o) => !selected.some((s) => s === o));
   }, [options, selected]);
 
   const handleUnselect = React.useCallback(
     (value: string) => {
-      const newSelected = selected.filter((s) => s.value !== value);
+      const newSelected = selected.filter((s) => s !== value);
 
       setSelected(newSelected);
-      onValueChange(newSelected.map((i) => i.value));
+      onValueChange(newSelected);
     },
-    [selected]
+    [selected],
   );
 
   const handleSelect = React.useCallback(
     (value: string) => {
-      const newSelected = [
-        ...selected,
-        options.find((o) => o.value === value)!,
-      ];
+      const newSelected = [...selected, options.find((o) => o === value)!];
 
       setSelected(newSelected);
-      onValueChange(newSelected.map((i) => i.value));
+      onValueChange(newSelected);
     },
-    [options, selected]
+    [options, selected],
   );
 
   const handleKeyDown = React.useCallback(
@@ -69,7 +63,16 @@ function MultiSelect({
             const newSelected = [...selected];
             newSelected.pop();
             setSelected(newSelected);
-            onValueChange(newSelected.map((i) => i.value));
+            onValueChange(newSelected);
+          }
+        }
+        if (e.key === "Enter") {
+          e.stopPropagation();
+          const isSelectable = selectables.some((s) => s === input.value);
+          if (!isSelectable) {
+            onValueChange([...selected, input.value]);
+            setSelected((prev) => [...prev, input.value]);
+            setInputValue("");
           }
         }
         // This is not a default behaviour of the <input /> field
@@ -78,12 +81,12 @@ function MultiSelect({
         }
       }
     },
-    [selected]
+    [selected],
   );
 
   React.useEffect(() => {
-    setSelected(selectedValues.map((s) => options.find((o) => o.value === s)!));
-  }, [selectedValues]);
+    setSelected(values);
+  }, [values]);
 
   React.useEffect(() => {
     const selectablesGroup = selectablesGroupRef.current;
@@ -105,12 +108,6 @@ function MultiSelect({
         console.log("here2");
         selectablesGroup.style.top = `50px`;
       }
-
-      console.log(
-        groupDimension.top,
-        groupDimension.height,
-        window.innerHeight
-      );
     }
 
     return () => {
@@ -126,22 +123,22 @@ function MultiSelect({
     >
       <div className="group rounded-md border border-input p-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
         <div className="flex flex-wrap gap-1">
-          {selected.map((item) => {
+          {selected?.map((item) => {
             return (
-              <Badge key={item.value} variant="secondary" className="rounded">
-                {item.label}
+              <Badge key={item} variant="secondary" className="rounded">
+                {item}
                 <button
                   className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      handleUnselect(item.value);
+                      handleUnselect(item);
                     }
                   }}
                   onMouseDown={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                   }}
-                  onClick={() => handleUnselect(item.value)}
+                  onClick={() => handleUnselect(item)}
                 >
                   <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
                 </button>
@@ -160,7 +157,7 @@ function MultiSelect({
           />
         </div>
       </div>
-      <div className="absolute w-full h-fit" ref={selectablesGroupRef}>
+      <div className="absolute w-full h-fit z-50" ref={selectablesGroupRef}>
         <CommandList>
           {open && selectables.length > 0 ? (
             <div className=" top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
@@ -168,19 +165,19 @@ function MultiSelect({
                 {selectables.map((item) => {
                   return (
                     <CommandItem
-                      key={item.value}
+                      key={item}
                       onMouseDown={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                       }}
-                      value={item.value}
+                      value={item}
                       onSelect={(value) => {
                         setInputValue("");
                         handleSelect(value);
                       }}
                       className={"cursor-pointer"}
                     >
-                      {item.label}
+                      {item}
                     </CommandItem>
                   );
                 })}

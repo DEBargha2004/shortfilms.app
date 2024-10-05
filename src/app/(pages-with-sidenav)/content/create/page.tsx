@@ -62,20 +62,25 @@ import {
   isValidVimeoUrl,
   isValidYoutubeUrl,
 } from "@/functions/url-format";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { SelectItemText } from "@radix-ui/react-select";
 
 const playlists: MultiSelectItemProps[] = [
-  { label: "Playlist 1", value: "1" },
-  { label: "Playlist 2", value: "2" },
-  { label: "Playlist 3", value: "3" },
-  { label: "Playlist 4", value: "4" },
+  "Playlist 1",
+  "Playlist 2",
+  "Playlist 3",
+  "Playlist 4",
 ];
 
-const tags: MultiSelectItemProps[] = [
-  { label: "Tag 1", value: "1" },
-  { label: "Tag 2", value: "2" },
-  { label: "Tag 3", value: "3" },
-  { label: "Tag 4", value: "4" },
-];
+const tags: MultiSelectItemProps[] = ["Tag 1", "Tag 2", "Tag 3", "Tag 4"];
+
+const publisherTypes: string[] = ["School", "Studio", "Softwares"];
 
 export default function Page() {
   const form = useForm<PostCreateSchema>({
@@ -85,6 +90,7 @@ export default function Page() {
       publishToSocialNetworks: false,
       playlist: [],
       tags: [],
+      members: [],
     },
   });
 
@@ -150,7 +156,7 @@ export default function Page() {
       }
     },
     accept: {
-      "images/*": [],
+      "image/*": [],
     },
     multiple: false,
   });
@@ -246,7 +252,7 @@ export default function Page() {
                               <div
                                 className={cn(
                                   "grid @lg:grid-cols-2 p-4 rounded border-2 border-dashed",
-                                  "divide-y @lg:divide-y-0 @lg:divide-x"
+                                  "divide-y @lg:divide-y-0 @lg:divide-x",
                                 )}
                               >
                                 <Dialog
@@ -351,7 +357,7 @@ export default function Page() {
                               <div
                                 className={cn(
                                   "grid @lg:grid-cols-2 p-4 rounded border-2 border-dashed",
-                                  "divide-y @lg:divide-y-0 @lg:divide-x"
+                                  "divide-y @lg:divide-y-0 @lg:divide-x",
                                 )}
                               >
                                 <Dialog
@@ -438,7 +444,7 @@ export default function Page() {
                         (form.watch("trailer.type") === "link" ? (
                           <iframe
                             src={generateVideoEmbedUrl(
-                              form.watch("trailer.url")
+                              form.watch("trailer.url"),
                             )}
                             className="w-full aspect-video"
                           />
@@ -449,6 +455,54 @@ export default function Page() {
                             controls
                           />
                         ))}
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="pt-6 space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="publisherType"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Publisher Type</FormLabel>
+                            <FormControl>
+                              <Select
+                                value={field.value}
+                                onValueChange={field.onChange}
+                              >
+                                <SelectTrigger ref={field.ref}>
+                                  <SelectValue placeholder="Publisher Type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {publisherTypes.map((option) => (
+                                    <SelectItem key={option} value={option}>
+                                      {option}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="members"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Team Members</FormLabel>
+                            <FormControl>
+                              <MultiSelect
+                                values={field.value}
+                                onValueChange={field.onChange}
+                                options={[]}
+                                placeholder="Select options"
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
                     </CardContent>
                   </Card>
                   <Card>
@@ -478,7 +532,7 @@ export default function Page() {
                               <MultiSelect
                                 onValueChange={field.onChange}
                                 options={playlists}
-                                selectedValues={field.value}
+                                values={field.value}
                                 placeholder="Select Playlists"
                               />
                             </FormControl>
@@ -496,7 +550,7 @@ export default function Page() {
                               <MultiSelect
                                 options={tags}
                                 onValueChange={field.onChange}
-                                selectedValues={field.value}
+                                values={field.value}
                                 placeholder="Select Tags"
                               />
                             </FormControl>
@@ -524,7 +578,7 @@ export default function Page() {
                               <div
                                 className={cn(
                                   "w-full aspect-video bg-muted/50 flex justify-center items-center",
-                                  thumbnailDropzone.isDragActive && "bg-muted"
+                                  thumbnailDropzone.isDragActive && "bg-muted",
                                 )}
                                 {...(field.value
                                   ? {}
@@ -553,7 +607,7 @@ export default function Page() {
                     <CardFooter
                       className={cn(
                         "grid gap-2",
-                        form.watch("thumbnail") ? "grid-cols-2" : "grid-cols-1"
+                        form.watch("thumbnail") ? "grid-cols-2" : "grid-cols-1",
                       )}
                     >
                       <Button
@@ -632,6 +686,7 @@ export default function Page() {
                       ) : null}
                     </CardFooter>
                   </Card>
+
                   <Card>
                     <CardContent className="pt-4">
                       <FormField
@@ -641,7 +696,7 @@ export default function Page() {
                           <FormItem
                             className={cn(
                               "space-y-0",
-                              "flex flex-row-reverse items-center justify-end gap-4"
+                              "flex flex-row-reverse items-center justify-end gap-4",
                             )}
                           >
                             <FormLabel>

@@ -72,11 +72,6 @@
   }
 }
 
-html,
-body {
-  height: 100%;
-}
-
 .scroller::-webkit-scrollbar {
   width: 5px;
 }

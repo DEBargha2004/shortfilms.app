@@ -1,17 +1,17 @@
-import { PostLayout } from '@/components/custom/post'
-import { cn } from '@/lib/utils'
+import { PostLayout } from "@/components/custom/post/post-layout";
+import { cn } from "@/lib/utils";
 
-export default function Layout ({
+export default function Layout({
   children,
-  related
+  related,
 }: {
-  children: React.ReactNode
-  related: React.ReactNode
+  children: React.ReactNode;
+  related: React.ReactNode;
 }) {
   return (
     <PostLayout>
       {children}
       {related}
     </PostLayout>
-  )
+  );
 }

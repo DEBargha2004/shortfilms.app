@@ -25,20 +25,26 @@ export default function SideNav({
   let { isSidebarMinimized } = useGlobalAppStore();
 
   return (
-    <div className={cn(" overflow-y-auto", className)} {...props}>
+    <div
+      className={cn(
+        "shrink-0 md:z-0 md:w-fit md:top-16 w-full z-50 bg-background sticky bottom-0",
+        className,
+      )}
+      {...props}
+    >
       <SideNavMiniView
         className={cn(
           "hidden",
           isSidebarMinimized
             ? "md:flex flex-col items-center w-14 justify-start gap-1"
-            : "md:hidden"
+            : "md:hidden",
         )}
       />
-      <BottomNavMiniView className="md:hidden flex justify-center items-center sm:gap-6 gap-1" />
+      <BottomNavMiniView className="md:hidden flex justify-center items-center sm:gap-6 gap-1 border-t" />
       <SideNavFullView
         className={cn(
           "hidden w-40",
-          isSidebarMinimized ? "md:hidden" : "md:block"
+          isSidebarMinimized ? "md:hidden" : "md:block",
         )}
       />
     </div>
@@ -184,7 +190,7 @@ export const SideNavItemWrapper = forwardRef<
     className={cn(
       "w-full rounded-lg transition-all hover:bg-accent",
       selected && "bg-accent",
-      className
+      className,
     )}
     ref={ref}
     {...props}
@@ -216,7 +222,7 @@ export const SideNavItem = forwardRef<
       side = "right",
       ...props
     },
-    ref
+    ref,
   ) => (
     <TooltipProvider>
       <Tooltip delayDuration={20}>
@@ -227,7 +233,7 @@ export const SideNavItem = forwardRef<
               className={cn(
                 "flex items-center gap-2 px-4 py-2",
                 renderType === "mini" ? "flex-col" : "flex-row",
-                className
+                className,
               )}
               {...props}
             >
@@ -240,7 +246,7 @@ export const SideNavItem = forwardRef<
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  )
+  ),
 );
 
 export const SideNavItemLabel = forwardRef<

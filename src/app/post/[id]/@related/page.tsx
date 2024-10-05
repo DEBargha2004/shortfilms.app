@@ -1,15 +1,15 @@
-import { RelatedPosts } from '@/components/custom/post'
-import getRelatedPosts from '@/functions/get-related-posts'
+import RelatedPosts from "@/components/custom/post/related-posts";
+import getRelatedPosts from "@/functions/get-related-posts";
 
-export default async function Page ({
-  params: { id }
+export default async function Page({
+  params: { id },
 }: {
-  params: { id: string }
+  params: { id: string };
 }) {
-  const relatedPosts = await getRelatedPosts(id)
+  const relatedPosts = await getRelatedPosts(id);
   return (
     <>
       <RelatedPosts posts={relatedPosts} />
     </>
-  )
+  );
 }

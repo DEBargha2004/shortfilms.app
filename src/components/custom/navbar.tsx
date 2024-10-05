@@ -12,12 +12,15 @@ import { useGlobalAppStore } from "@/store/global-app-store";
 import Link from "next/link";
 import { hrefs } from "@/constants/hrefs";
 import { usePathname } from "next/navigation";
-import { useMemo } from "react";
+import { HTMLProps, useMemo } from "react";
 import { pagesWithoutSideNav } from "@/constants/pages";
 import micromatch from "micromatch";
 import { cn } from "@/lib/utils";
 
-export default function Navbar() {
+export default function Navbar({
+  className,
+  ...props
+}: HTMLProps<HTMLDivElement>) {
   const {
     isSideNavOpen,
     setIsSideNavOpen,
@@ -28,17 +31,23 @@ export default function Navbar() {
 
   const showOnlySideNavSheet = useMemo(() => {
     return pagesWithoutSideNav.some((page) =>
-      micromatch.isMatch(pathname, page)
+      micromatch.isMatch(pathname, page),
     );
   }, [pathname]);
 
   return (
-    <div className="h-16 w-full md:px-4 px-2 flex justify-between items-center gap-2">
+    <div
+      className={cn(
+        "h-16 w-full md:px-4 px-2 flex justify-between items-center gap-2",
+        className,
+      )}
+      {...props}
+    >
       <div className="flex justify-start items-center gap-2">
         <Button
           variant={"outline"}
           className={cn(
-            showOnlySideNavSheet ? "hidden" : "px-1.5 h-3/4 md:block hidden"
+            showOnlySideNavSheet ? "hidden" : "px-1.5 h-3/4 md:block hidden",
           )}
           onClick={() => setIsSidebarMinimized(!isSidebarMinimized)}
         >
@@ -50,7 +59,7 @@ export default function Navbar() {
               variant={"outline"}
               className={cn(
                 "px-1.5 h-3/4 ",
-                showOnlySideNavSheet ? "block" : "md:hidden block"
+                showOnlySideNavSheet ? "block" : "md:hidden block",
               )}
             >
               <Menu className="h-5" />

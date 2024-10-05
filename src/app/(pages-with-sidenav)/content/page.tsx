@@ -1,14 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Edit,
-  Eye,
-  ListFilter,
-  PlusCircle,
-  Search,
-  Trash2,
-} from "lucide-react";
+import { ListFilter, PlusCircle, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -36,7 +29,6 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
-import { type Icon } from "@/types/icon";
 import TableItem from "./_components/table-item";
 
 type FieldType = { label: string; value: string };
