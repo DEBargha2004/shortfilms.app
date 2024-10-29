@@ -20,6 +20,8 @@ const config = {
     },
     extend: {
       screens: {
+        xxs: "320px",
+        xs: "450px",
         "2xl": "1400px",
         "3xl": "1920px",
         "4xl": "2500px",
@@ -56,6 +58,14 @@ const config = {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        "light-accent": {
+          DEFAULT: "hsl(var(--light-accent))",
+          foreground: "hsl(var(--light-accent-foreground))",
+        },
+        "dark-accent": {
+          DEFAULT: "hsl(var(--dark-accent))",
+          foreground: "hsl(var(--dark-accent-foreground))",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
@@ -79,10 +89,15 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "caret-blink": {
+          "0%,70%,100%": { opacity: "1" },
+          "20%,50%": { opacity: "0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "caret-blink": "caret-blink 1.25s ease-out infinite",
       },
     },
   },

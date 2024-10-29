@@ -1,4 +1,5 @@
 "use client";
+
 import * as React from "react";
 import { X } from "lucide-react";
 
@@ -18,11 +19,13 @@ function MultiSelect({
   values,
   onValueChange,
   placeholder = "Select options",
+  custom = true,
 }: {
   options: MultiSelectItemProps[];
   values: MultiSelectItemProps[];
   onValueChange: (values: MultiSelectItemProps[]) => void;
   placeholder?: string;
+  custom?: boolean;
 }) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const selectablesGroupRef = React.useRef<HTMLDivElement>(null);
@@ -69,7 +72,7 @@ function MultiSelect({
         if (e.key === "Enter") {
           e.stopPropagation();
           const isSelectable = selectables.some((s) => s === input.value);
-          if (!isSelectable) {
+          if (!isSelectable && custom && input.value) {
             onValueChange([...selected, input.value]);
             setSelected((prev) => [...prev, input.value]);
             setInputValue("");
@@ -119,7 +122,7 @@ function MultiSelect({
   return (
     <Command
       onKeyDown={handleKeyDown}
-      className="overflow-visible bg-transparent relative"
+      className="overflow-visible bg-background relative"
     >
       <div className="group rounded-md border border-input p-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
         <div className="flex flex-wrap gap-1">

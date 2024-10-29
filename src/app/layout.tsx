@@ -4,8 +4,8 @@ import { ThemeProvider } from "@/provider/theme-provider";
 import "./globals.css";
 import { Navbar, NavigationHelper } from "@/components/custom";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/toaster";
 
-const inter = Inter({ subsets: ["latin"] });
 const roboto = Roboto({
   weight: ["100", "300", "400", "500", "700"],
   subsets: ["latin"],
@@ -39,8 +39,8 @@ export default function RootLayout({
               {children}
               {post}
             </div>
-
             <NavigationHelper />
+            <Toaster />
           </ThemeProvider>
         </body>
       </html>

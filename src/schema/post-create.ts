@@ -16,7 +16,9 @@ export const postCreateSchema = z.object({
   tags: z.array(z.string()),
   thumbnail: z.string(),
   publishToSocialNetworks: z.boolean(),
-  publisherType: z.string(),
+  school: z.string(),
+  studio: z.string(),
+  softwares: z.array(z.string()),
   members: z.array(z.string()),
 });
 

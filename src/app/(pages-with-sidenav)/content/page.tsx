@@ -44,9 +44,9 @@ export default function Content() {
   return (
     <div className="flex h-full w-full flex-col overflow-y-auto scroller">
       <div className="flex flex-col sm:gap-4 sm:p-0 p-1">
-        <main className="grid flex-1 items-start gap-4 sm:py-0 md:gap-8">
+        <main className="grid flex-1 items-start gap-4 md:gap-8 p-5">
           <Tabs defaultValue="all">
-            <div className="flex sm:flex-row flex-col items-center justify-between gap-2 ">
+            <div className="flex sm:flex-row flex-col items-center justify-between gap-2">
               <div className="flex gap-2 items-center justify-start sm:w-fit w-full">
                 <TabsList className="bg-card">
                   <TabsTrigger value="all">All</TabsTrigger>
