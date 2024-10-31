@@ -2,25 +2,42 @@ import { NextRequest, NextResponse } from "next/server";
 import micromatch from "micromatch";
 
 const publicRoutes: string[] = ["/a/**", "/@*"];
+const authRoutes: string[] = ["/a/sign-in/**", "/a/sign-up/**"];
 
 const isPublicRoute = (pathname: string) => {
   return publicRoutes.some((route) => micromatch.isMatch(pathname, route));
 };
 
+const isAuthRoute = (pathname: string) => {
+  return authRoutes.some((route) => micromatch.isMatch(pathname, route));
+};
+
 export function middleware(request: NextRequest) {
   const cookies = request.cookies;
   const pathname = request.nextUrl.pathname;
-  const isPublic = isPublicRoute(pathname);
-
-  if (isPublic) return NextResponse.next();
   const token = cookies.get("pb_auth");
+  const headers = new Headers(request.headers);
+
+  const isAuth = isAuthRoute(pathname);
+  const referrer = new URL(request.referrer);
+
+  const redirectUrl =
+    referrer.origin === request.nextUrl.origin
+      ? referrer
+      : request.nextUrl.origin;
+
+  if (isAuth && token) return NextResponse.redirect(redirectUrl);
+
+  const isPublic = isPublicRoute(pathname);
+  if (isPublic) return NextResponse.next();
+
   if (!token) {
     const url = new URL(process.env.NEXT_PUBLIC_SIGNIN_PATH!, request.url);
     if (request.nextUrl.pathname)
       url.searchParams.set("callback", request.nextUrl.href);
     return NextResponse.redirect(url);
   }
-  const headers = new Headers(request.headers);
+
   headers.set("Authorization", `Bearer ${token?.value}`);
   return NextResponse.next({
     request: {

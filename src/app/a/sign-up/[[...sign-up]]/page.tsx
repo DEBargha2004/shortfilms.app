@@ -7,9 +7,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import FormWrapper from "../../_components/form-wrapper";
 import Center from "../../_components/center";
-import { signup } from "@/actions/auth";
 import { isActionError } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/provider/auth-provider";
 
 export default function Page() {
   const basicSignupForm = useForm<TBasicSignup>({
@@ -18,6 +18,7 @@ export default function Page() {
 
   const [formLevel, setFormLevel] = useState(0);
   const { toast } = useToast();
+  const { signup } = useAuth();
 
   const handleBaisicSignup = async (e: TBasicSignup) => {
     const res = await signup(e);

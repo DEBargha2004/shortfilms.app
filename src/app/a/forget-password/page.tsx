@@ -1,12 +1,8 @@
 "use client";
 
 import {
-  forgetPasswordOtpSchema,
   forgetPasswordSchema,
-  forgetPasswordSetPasswordSchema,
   TForgetPassword,
-  TForgetPasswordOtp,
-  TForgetPasswordSetPassword,
 } from "@/schema/forget-password";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -14,9 +10,9 @@ import Center from "../_components/center";
 import FormWrapper from "../_components/form-wrapper";
 import ForgetPasswordForm from "@/components/custom/forms/forget-password-form";
 import { useState } from "react";
-import ForgetPasswordOtpForm from "@/components/custom/forms/forget-password-otp";
-import ForgetPasswordSetPasswordForm from "@/components/custom/forms/forget-password-setpassword";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/provider/auth-provider";
+import { isActionError } from "@/lib/utils";
 
 export default function Page() {
   const { toast } = useToast();
@@ -24,22 +20,27 @@ export default function Page() {
   const forgetPasswordEmailForm = useForm<TForgetPassword>({
     resolver: zodResolver(forgetPasswordSchema),
   });
-  const forgetPasswordOtpForm = useForm<TForgetPasswordOtp>({
-    resolver: zodResolver(forgetPasswordOtpSchema),
-  });
-  const forgetPasswordSetPassword = useForm<TForgetPasswordSetPassword>({
-    resolver: zodResolver(forgetPasswordSetPasswordSchema),
-  });
+  const { forgetPasswordGetMail } = useAuth();
 
   const [formLevel, setFormLevel] = useState(0);
 
   const handleEmailSubmit = async (e: TForgetPassword) => {
+    const res = await forgetPasswordGetMail(e);
+
+    if (isActionError(res)) {
+      return toast({
+        variant: "destructive",
+        title: "Error",
+        description: res.error,
+      });
+    }
+
+    toast({
+      title: "Success",
+      description: "Check your email",
+    });
     setFormLevel(1);
   };
-  const handleOtpSubmit = async (e: TForgetPasswordOtp) => {
-    setFormLevel(2);
-  };
-  const handleSetPasswordSubmit = async (e: TForgetPasswordSetPassword) => {};
 
   return (
     <>
@@ -55,22 +56,7 @@ export default function Page() {
       )}
       {formLevel === 1 && (
         <Center>
-          <FormWrapper>
-            <ForgetPasswordOtpForm
-              form={forgetPasswordOtpForm}
-              onSubmit={handleOtpSubmit}
-            />
-          </FormWrapper>
-        </Center>
-      )}
-      {formLevel === 2 && (
-        <Center>
-          <FormWrapper>
-            <ForgetPasswordSetPasswordForm
-              form={forgetPasswordSetPassword}
-              onSubmit={handleSetPasswordSubmit}
-            />
-          </FormWrapper>
+          <h1 className="text-2xl">Check your email</h1>
         </Center>
       )}
     </>

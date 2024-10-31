@@ -7,14 +7,19 @@ import FormWrapper from "../../_components/form-wrapper";
 import SigninForm from "@/components/custom/forms/signin-form";
 import Center from "../../_components/center";
 import { useToast } from "@/hooks/use-toast";
-import { login } from "@/actions/auth";
 import { isActionError } from "@/lib/utils";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/provider/auth-provider";
 
 export default function Page() {
   const form = useForm<TSignIn>({
     resolver: zodResolver(signinSchema),
   });
+
   const { toast } = useToast();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: TSignIn) => {
     const res = await login(e);
@@ -28,10 +33,17 @@ export default function Page() {
     }
 
     if (res) {
-      return toast({
+      toast({
         title: "Success",
-        description: res.message,
+        description: "You are now logged in.",
       });
+
+      const callbackUrl = searchParams.get("callback");
+      if (callbackUrl) {
+        return router.push(callbackUrl);
+      }
+
+      return router.push("/");
     }
   };
 

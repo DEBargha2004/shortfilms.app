@@ -29,7 +29,10 @@ i18nIsoCountries.registerLocale(enCountries);
 
 const InputPhone = forwardRef<
   HTMLInputElement,
-  { value: string | undefined; onChange: (value: string | undefined) => void }
+  {
+    value: string | undefined;
+    onChange: (value: string | undefined) => void;
+  }
 >(({ value, onChange }, ref) => {
   const options = getCountriesOptions();
 

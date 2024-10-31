@@ -5,6 +5,7 @@ import "./globals.css";
 import { Navbar, NavigationHelper } from "@/components/custom";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
+import { AuthProvider } from "@/provider/auth-provider";
 
 const roboto = Roboto({
   weight: ["100", "300", "400", "500", "700"],
@@ -24,7 +25,7 @@ export default function RootLayout({
   post: React.ReactNode;
 }) {
   return (
-    <>
+    <AuthProvider>
       <html lang="en" suppressHydrationWarning>
         <head />
         <body className={cn(roboto.className, "scroller")}>
@@ -44,6 +45,6 @@ export default function RootLayout({
           </ThemeProvider>
         </body>
       </html>
-    </>
+    </AuthProvider>
   );
 }

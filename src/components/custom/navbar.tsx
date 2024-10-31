@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { LogOut, Menu, UserRound } from "lucide-react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { SideNavFullView } from "./side-nav";
@@ -15,7 +15,15 @@ import { usePathname } from "next/navigation";
 import { HTMLProps, useMemo } from "react";
 import { pagesWithoutSideNav } from "@/constants/pages";
 import micromatch from "micromatch";
-import { cn } from "@/lib/utils";
+import { cn, isActionError } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { useAuth } from "@/provider/auth-provider";
 
 export default function Navbar({
   className,
@@ -27,7 +35,29 @@ export default function Navbar({
     setIsSidebarMinimized,
     isSidebarMinimized,
   } = useGlobalAppStore();
+
   const pathname = usePathname();
+  const { toast } = useToast();
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    const res = await logout();
+    if (isActionError(res)) {
+      return toast({
+        title: "Error",
+        description: res.error,
+      });
+    }
+
+    if (res && res.success) {
+      return window.location.reload();
+    }
+
+    return toast({
+      title: "Error",
+      description: "Could not logged out",
+    });
+  };
 
   const showOnlySideNavSheet = useMemo(() => {
     return pagesWithoutSideNav.some((page) =>
@@ -77,11 +107,32 @@ export default function Navbar({
         <SearchInput />
       </div>
       <div className="flex justify-start items-center gap-3">
-        <NotificationBell count={23} />
-        <Avatar className="">
-          <AvatarImage />
-          <AvatarFallback>JD</AvatarFallback>
-        </Avatar>
+        {user && <NotificationBell count={23} />}
+        {user && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="cursor-pointer">
+                <AvatarImage />
+                <AvatarFallback>JD</AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <Link href={hrefs.createProfile}>
+                <DropdownMenuItem>
+                  <UserRound className="h-4 w-4 mr-2" />
+                  Complete Profile
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuItem
+                onClick={handleLogout}
+                onSelect={(e) => e.preventDefault()}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </div>
   );

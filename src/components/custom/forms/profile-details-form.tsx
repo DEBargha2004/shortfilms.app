@@ -29,9 +29,11 @@ import { cn } from "@/lib/utils";
 export default function ProfileDetailsForm({
   form,
   handleSubmit,
+  disabled,
 }: {
   form: ReturnType<typeof useForm<TProfileDetails>>;
   handleSubmit: (e: TProfileDetails) => void;
+  disabled?: boolean;
 }) {
   const avatarDropzone = useDropzone({
     accept: {
@@ -172,7 +174,7 @@ export default function ProfileDetailsForm({
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full space-x-2">
+        <Button type="submit" className="w-full space-x-2" disabled={disabled}>
           {form.formState.isSubmitting && (
             <Loader2 className="h-4 w-4 animate-spin" />
           )}

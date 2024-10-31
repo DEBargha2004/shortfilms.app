@@ -23,4 +23,4 @@ const initPocketbase = async () => {
   return pb;
 };
 
-export default initPocketbase;
+export { initPocketbase };
