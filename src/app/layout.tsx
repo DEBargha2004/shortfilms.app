@@ -18,10 +18,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  post,
 }: {
   children: React.ReactNode;
-  post: React.ReactNode;
 }) {
   return (
     <>
@@ -35,11 +33,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Navbar className="sticky top-0 z-50 bg-background border-b" />
-            <div className="h-fit">
-              {children}
-              {post}
-            </div>
-
+            {children}
             <NavigationHelper />
           </ThemeProvider>
         </body>
