@@ -52,3 +52,38 @@ export const techniques: string[] = [
   "Virtual Production",
   "VR/360",
 ];
+
+export const publishingTypes = [
+  {
+    label: "Public",
+    value: "public",
+  },
+  {
+    label: "Private",
+    value: "private",
+  },
+  {
+    label: "Unlisted",
+    value: "unlisted",
+  },
+  {
+    label: "Scheduled",
+    value: "scheduled",
+  },
+] as const;
+
+export const publicPublishing = publishingTypes.find(
+  (type) => type.value === "public"
+)!;
+
+export const privatePublishing = publishingTypes.find(
+  (type) => type.value === "private"
+)!;
+
+export const scheduledPublishing = publishingTypes.find(
+  (type) => type.value === "scheduled"
+)!;
+
+export const unlistedPublishing = publishingTypes.find(
+  (type) => type.value === "unlisted"
+)!;

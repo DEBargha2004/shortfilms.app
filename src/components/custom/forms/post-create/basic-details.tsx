@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PostCreateSchema } from "@/schema/post-create";
 import { TFormChildrenDefaultProps } from "@/types/form-props";
-import { Control } from "react-hook-form";
+import React from "react";
 
 export default function BasicDetails({
   form,
@@ -37,7 +37,11 @@ export default function BasicDetails({
           <FormItem>
             <FormLabel>Description</FormLabel>
             <FormControl>
-              <Textarea {...field} rows={6} />
+              <Textarea
+                {...field}
+                className="resize-none max-h-60 scroller"
+                style={{ fieldSizing: "content" } as React.CSSProperties}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

@@ -1,0 +1,121 @@
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  privatePublishing,
+  publishingTypes,
+  scheduledPublishing,
+} from "@/constants/general";
+import { PostCreateSchema } from "@/schema/post-create";
+import { TFormChildrenDefaultProps } from "@/types/form-props";
+import { useWatch } from "react-hook-form";
+import IconInput from "../../icon-input";
+import { useState } from "react";
+import { EyeIcon, EyeOff } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+
+export default function PublishOptions({
+  form,
+}: TFormChildrenDefaultProps<PostCreateSchema>) {
+  const { publishingOption } = useWatch({
+    control: form.control,
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  return (
+    <>
+      <FormField
+        control={form.control}
+        name="publishingOption.publishType"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Publish Type</FormLabel>
+            <FormControl>
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {publishingTypes.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      {publishingOption?.publishType === privatePublishing.value && (
+        <FormField
+          control={form.control}
+          name="publishingOption.password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <IconInput
+                  type={showPassword ? "text" : "password"}
+                  {...field}
+                  endIcon={
+                    <div onClick={() => setShowPassword(!showPassword)}>
+                      {showPassword ? <EyeOff /> : <EyeIcon />}
+                    </div>
+                  }
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      )}
+      {publishingOption?.publishType === scheduledPublishing.value && (
+        <FormField
+          control={form.control}
+          name="publishingOption.publishDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} placeholder="Publish Date" />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      )}
+      <FormField
+        control={form.control}
+        name="publishToSocialNetworks"
+        render={({ field }) => (
+          <FormItem
+            className={cn(
+              "space-y-0",
+              "flex flex-row-reverse items-center justify-end gap-4"
+            )}
+          >
+            <FormLabel>Publish to other social networks</FormLabel>
+            <FormControl>
+              <Checkbox
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+    </>
+  );
+}

@@ -2,7 +2,7 @@ import {
   UploadButton,
   UploadButtonDescription,
   UploadButtonTitle,
-} from "@/app/(pages-with-sidenav)/content/_components/upload-button";
+} from "@/app/(app)/(pages-with-sidenav)/content/_components/upload-button";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -79,6 +79,7 @@ import Credits from "./credits";
 import Thumbnail from "./thumbnail";
 import Honors from "./honors";
 import Press from "./press";
+import PublishOptions from "./publish";
 
 const playlists: MultiSelectItemProps[] = [
   "Playlist 1",
@@ -191,27 +192,8 @@ export default function PostCreateForm({
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="pt-4">
-              <FormField
-                control={form.control}
-                name="publishToSocialNetworks"
-                render={({ field }) => (
-                  <FormItem
-                    className={cn(
-                      "space-y-0",
-                      "flex flex-row-reverse items-center justify-end gap-4"
-                    )}
-                  >
-                    <FormLabel>Publish to other social networks</FormLabel>
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+            <CardContent className="pt-4 space-y-4">
+              <PublishOptions form={form} />
             </CardContent>
             <CardFooter>
               <Button variant={"success"} className="w-full">

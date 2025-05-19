@@ -2,7 +2,7 @@ import {
   UploadButton,
   UploadButtonDescription,
   UploadButtonTitle,
-} from "@/app/(pages-with-sidenav)/content/_components/upload-button";
+} from "@/app/(app)/(pages-with-sidenav)/content/_components/upload-button";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { Inter, Roboto } from "next/font/google";
 import { ThemeProvider } from "@/provider/theme-provider";
 import "./globals.css";
-import { Navbar, NavigationHelper } from "@/components/custom";
+import { NavigationHelper } from "@/components/custom";
 import { cn } from "@/lib/utils";
+import QueryProvider from "@/provider/query-provider";
+import AuthProvider from "@/provider/auth-provider";
+import { Toaster } from "@/components/ui/sonner";
 
-const inter = Inter({ subsets: ["latin"] });
 const roboto = Roboto({
   weight: ["100", "300", "400", "500", "700"],
   subsets: ["latin"],
@@ -26,16 +28,20 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <head />
         <body className={cn(roboto.className, "scroller")}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Navbar className="sticky top-0 z-50 bg-background border-b" />
-            {children}
-            <NavigationHelper />
-          </ThemeProvider>
+          <AuthProvider>
+            <QueryProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="dark"
+                enableSystem
+                disableTransitionOnChange
+              >
+                {children}
+                <NavigationHelper />
+                <Toaster />
+              </ThemeProvider>
+            </QueryProvider>
+          </AuthProvider>
         </body>
       </html>
     </>

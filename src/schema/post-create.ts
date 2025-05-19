@@ -1,3 +1,8 @@
+import {
+  privatePublishing,
+  publicPublishing,
+  scheduledPublishing,
+} from "@/constants/general";
 import * as z from "zod";
 
 export const postCreateSchema = z.object({
@@ -20,7 +25,6 @@ export const postCreateSchema = z.object({
     premiereStatus: z.string().min(1),
     completionDate: z.string().min(1),
     ageRating: z.string().min(1),
-
     isPaid: z.boolean(),
   }),
   categories: z.object({
@@ -34,6 +38,31 @@ export const postCreateSchema = z.object({
   publishToSocialNetworks: z.boolean(),
   publisherType: z.string(),
   members: z.array(z.string()),
+  publishingOption: z
+    .object({
+      copyrightPermission: z.boolean(),
+      publishType: z.string(),
+      password: z.string().optional(),
+      publishDate: z.string().optional(),
+    })
+    .refine(
+      (data) => {
+        if (data.publishType === privatePublishing.value && data.password)
+          return true;
+      },
+      {
+        message: "Password is required",
+      }
+    )
+    .refine(
+      (data) => {
+        if (data.publishType === scheduledPublishing.value && data.publishDate)
+          return true;
+      },
+      {
+        message: "Publish Date is required",
+      }
+    ),
 });
 
 export type PostCreateSchema = z.infer<typeof postCreateSchema>;
@@ -69,4 +98,10 @@ export const defaultValues = (): PostCreateSchema => ({
   publishToSocialNetworks: false,
   publisherType: "",
   members: [],
+  publishingOption: {
+    copyrightPermission: false,
+    publishType: publicPublishing.value,
+    password: "",
+    publishDate: "",
+  },
 });

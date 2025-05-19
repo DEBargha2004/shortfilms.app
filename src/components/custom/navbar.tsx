@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { SideNavFullView } from "./side-nav";
@@ -15,7 +15,15 @@ import { usePathname } from "next/navigation";
 import { HTMLProps, useMemo } from "react";
 import { pagesWithoutSideNav } from "@/constants/pages";
 import micromatch from "micromatch";
-import { cn } from "@/lib/utils";
+import { cn, getAcronym } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { useAuth } from "@/provider/auth-provider";
+import { toast } from "sonner";
 
 export default function Navbar({
   className,
@@ -31,15 +39,27 @@ export default function Navbar({
 
   const showOnlySideNavSheet = useMemo(() => {
     return pagesWithoutSideNav.some((page) =>
-      micromatch.isMatch(pathname, page),
+      micromatch.isMatch(pathname, page)
     );
   }, [pathname]);
+
+  const { signout, user } = useAuth();
+  const handleSignout = async () => {
+    await signout({
+      onError(error) {
+        toast.error(error?.message || "Signout failed");
+      },
+      onSuccess(response) {
+        toast.success(response?.message);
+      },
+    });
+  };
 
   return (
     <div
       className={cn(
         "h-16 w-full md:px-4 px-2 flex justify-between items-center gap-2",
-        className,
+        className
       )}
       {...props}
     >
@@ -47,7 +67,7 @@ export default function Navbar({
         <Button
           variant={"outline"}
           className={cn(
-            showOnlySideNavSheet ? "hidden" : "px-1.5 h-3/4 md:block hidden",
+            showOnlySideNavSheet ? "hidden" : "px-1.5 h-3/4 md:block hidden"
           )}
           onClick={() => setIsSidebarMinimized(!isSidebarMinimized)}
         >
@@ -59,7 +79,7 @@ export default function Navbar({
               variant={"outline"}
               className={cn(
                 "px-1.5 h-3/4 ",
-                showOnlySideNavSheet ? "block" : "md:hidden block",
+                showOnlySideNavSheet ? "block" : "md:hidden block"
               )}
             >
               <Menu className="h-5" />
@@ -77,11 +97,26 @@ export default function Navbar({
         <SearchInput />
       </div>
       <div className="flex justify-start items-center gap-3">
-        <NotificationBell count={23} />
-        <Avatar className="">
-          <AvatarImage />
-          <AvatarFallback>JD</AvatarFallback>
-        </Avatar>
+        {user && <NotificationBell count={23} />}
+        {user && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="size-8">
+                <AvatarImage src={user.avatar} />
+                <AvatarFallback>{getAcronym(user.name ?? "")}</AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="[&>div]:gap-2 [&>div>svg]:size-4"
+            >
+              <DropdownMenuItem onClick={handleSignout}>
+                <LogOut />
+                <span>Logout</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </div>
   );
