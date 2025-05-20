@@ -26,10 +26,9 @@ export const postCreateSchema = z.object({
   categories: z.object({
     genres: z.array(z.string()),
     techniques: z.array(z.string()),
-    topics: z.array(z.string()),
+    tags: z.array(z.string()),
   }),
   playlist: z.array(z.string()),
-  tags: z.array(z.string()),
   thumbnail: z.string(),
   publishToSocialNetworks: z.boolean(),
   publisherType: z.string(),
@@ -90,10 +89,9 @@ export const defaultValues = (): PostCreateSchema => ({
   categories: {
     genres: [],
     techniques: [],
-    topics: [],
+    tags: [],
   },
   playlist: [],
-  tags: [],
   thumbnail: "",
   publishToSocialNetworks: false,
   publisherType: "",

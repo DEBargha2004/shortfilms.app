@@ -38,9 +38,9 @@ export default function Categories({
     control: form.control,
     name: "categories.techniques",
   });
-  const selectedTopics = useWatch({
+  const selectedTags = useWatch({
     control: form.control,
-    name: "categories.topics",
+    name: "categories.tags",
   });
 
   const handleToggle = (
@@ -61,9 +61,9 @@ export default function Categories({
     const topicTemp = topicInputRef.current?.value;
 
     if (!topicTemp) return;
-    form.setValue("categories.topics", [
+    form.setValue("categories.tags", [
       topicTemp,
-      ...form.getValues("categories.topics"),
+      ...form.getValues("categories.tags"),
     ]);
 
     topicInputRef.current.value = "";
@@ -71,8 +71,8 @@ export default function Categories({
 
   const handleRemoveTopic = (topic: string) => {
     form.setValue(
-      "categories.topics",
-      form.getValues("categories.topics").filter((t) => t !== topic)
+      "categories.tags",
+      form.getValues("categories.tags").filter((t) => t !== topic)
     );
   };
   return (
@@ -118,7 +118,7 @@ export default function Categories({
         )}
       />
       <section className="space-y-3">
-        <FormLabel>Topic</FormLabel>
+        <FormLabel>Tags</FormLabel>
         <div className="flex gap-2">
           <Input ref={topicInputRef} />
           <Button
@@ -132,7 +132,7 @@ export default function Categories({
           </Button>
         </div>
         <div className="flex flex-wrap gap-2 pt-3">
-          {selectedTopics.map((t) => (
+          {selectedTags.map((t) => (
             <Button
               className="p-2 h-8 gap-2"
               type="button"

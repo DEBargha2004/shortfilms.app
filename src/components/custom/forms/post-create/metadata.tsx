@@ -158,24 +158,7 @@ export default function Metadata({
           </FormItem>
         )}
       />
-      <FormField
-        control={form.control}
-        name="tags"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Tags</FormLabel>
-            <FormControl>
-              <MultiSelect
-                options={tags}
-                onValueChange={field.onChange}
-                values={field.value}
-                placeholder="Select Tags"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+
       <FormField
         control={form.control}
         name="details.isPaid"
