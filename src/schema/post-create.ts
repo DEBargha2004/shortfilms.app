@@ -1,8 +1,4 @@
-import {
-  privatePublishing,
-  publicPublishing,
-  scheduledPublishing,
-} from "@/constants/general";
+import { privatePublishing, publicPublishing } from "@/constants/general";
 import * as z from "zod";
 
 export const postCreateSchema = z.object({
@@ -38,12 +34,24 @@ export const postCreateSchema = z.object({
   publishToSocialNetworks: z.boolean(),
   publisherType: z.string(),
   members: z.array(z.string()),
+  schedulingOption: z
+    .object({
+      isScheduled: z.boolean(),
+      publishDate: z.string().optional(),
+    })
+    .refine(
+      ({ isScheduled, publishDate }) => {
+        if (isScheduled && !publishDate) return false;
+
+        return true;
+      },
+      { message: "Publish date is required", path: ["publishDate"] }
+    ),
   publishingOption: z
     .object({
       copyrightPermission: z.boolean(),
       publishType: z.string(),
       password: z.string().optional(),
-      publishDate: z.string().optional(),
     })
     .refine(
       (data) => {
@@ -52,15 +60,7 @@ export const postCreateSchema = z.object({
       },
       {
         message: "Password is required",
-      }
-    )
-    .refine(
-      (data) => {
-        if (data.publishType === scheduledPublishing.value && data.publishDate)
-          return true;
-      },
-      {
-        message: "Publish Date is required",
+        path: ["password"],
       }
     ),
 });
@@ -102,6 +102,9 @@ export const defaultValues = (): PostCreateSchema => ({
     copyrightPermission: false,
     publishType: publicPublishing.value,
     password: "",
+  },
+  schedulingOption: {
+    isScheduled: false,
     publishDate: "",
   },
 });

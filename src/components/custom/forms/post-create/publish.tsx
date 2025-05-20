@@ -12,25 +12,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  privatePublishing,
-  publishingTypes,
-  scheduledPublishing,
-} from "@/constants/general";
+import { privatePublishing, publishingTypes } from "@/constants/general";
 import { PostCreateSchema } from "@/schema/post-create";
 import { TFormChildrenDefaultProps } from "@/types/form-props";
 import { useWatch } from "react-hook-form";
 import IconInput from "../../icon-input";
 import { useState } from "react";
-import { EyeIcon, EyeOff } from "lucide-react";
+import { CalendarIcon, EyeIcon, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 
 export default function PublishOptions({
   form,
 }: TFormChildrenDefaultProps<PostCreateSchema>) {
-  const { publishingOption } = useWatch({
+  const { schedulingOption, publishingOption } = useWatch({
     control: form.control,
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -82,16 +86,32 @@ export default function PublishOptions({
           )}
         />
       )}
-      {publishingOption?.publishType === scheduledPublishing.value && (
+      <FormField
+        control={form.control}
+        name="schedulingOption.isScheduled"
+        render={({ field }) => (
+          <FormItem className="flex items-center gap-4 space-y-0">
+            <FormControl>
+              <Checkbox
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            </FormControl>
+            <FormLabel>Schedule</FormLabel>
+          </FormItem>
+        )}
+      />
+      {schedulingOption?.isScheduled && (
         <FormField
           control={form.control}
-          name="publishingOption.publishDate"
+          name="schedulingOption.publishDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Publish Date</FormLabel>
               <FormControl>
-                <Input type="date" {...field} placeholder="Publish Date" />
+                <Input type="datetime-local" {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />

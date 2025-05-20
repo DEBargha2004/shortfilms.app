@@ -66,10 +66,6 @@ export const publishingTypes = [
     label: "Unlisted",
     value: "unlisted",
   },
-  {
-    label: "Scheduled",
-    value: "scheduled",
-  },
 ] as const;
 
 export const publicPublishing = publishingTypes.find(
@@ -78,10 +74,6 @@ export const publicPublishing = publishingTypes.find(
 
 export const privatePublishing = publishingTypes.find(
   (type) => type.value === "private"
-)!;
-
-export const scheduledPublishing = publishingTypes.find(
-  (type) => type.value === "scheduled"
 )!;
 
 export const unlistedPublishing = publishingTypes.find(

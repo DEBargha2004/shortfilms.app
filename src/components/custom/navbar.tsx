@@ -24,6 +24,7 @@ import {
 } from "../ui/dropdown-menu";
 import { useAuth } from "@/provider/auth-provider";
 import { toast } from "sonner";
+import ModeToggle from "./mode-toggle";
 
 export default function Navbar({
   className,
@@ -117,6 +118,7 @@ export default function Navbar({
             </DropdownMenuContent>
           </DropdownMenu>
         )}
+        <ModeToggle />
       </div>
     </div>
   );

@@ -34,7 +34,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "prettier.config.js"
-, "src/app/auth/reset-password"  ],
+  ],
   "exclude": [
     "node_modules"
   ]
