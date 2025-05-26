@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { premiereStatus } from "@/constants/general";
+import { ageRating, premiereStatus } from "@/constants/general";
 import { languages } from "@/constants/lang";
 import { PostCreateSchema } from "@/schema/post-create";
 import { TFormChildrenDefaultProps } from "@/types/form-props";
@@ -37,109 +37,141 @@ export default function Metadata({
 }: TFormChildrenDefaultProps<PostCreateSchema>) {
   return (
     <>
-      <FormField
-        control={form.control}
-        name="details.duration"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Duration (in minites)</FormLabel>
-            <FormControl>
-              <Input
-                type="number"
-                value={field.value}
-                onChange={(e) => field.onChange(parseInt(e.target.value))}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="details.country"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Country</FormLabel>
-            <FormControl>
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(getCodeList()).map((code) => (
-                    <SelectItem key={code} value={code}>
-                      {getName(code)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <section className="grid grid-cols-2 gap-4">
+        <FormField
+          control={form.control}
+          name="details.duration"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Duration (in minites)</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  value={field.value}
+                  onChange={(e) => field.onChange(parseInt(e.target.value))}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="details.completionDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Completion Date</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </section>
 
-      <FormField
-        control={form.control}
-        name="details.language"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Language</FormLabel>
-            <FormControl>
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {languages.map((lang) => (
-                    <SelectItem key={lang.code} value={lang.code}>
-                      {lang.language}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="details.premiereStatus"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Premiere Status</FormLabel>
-            <FormControl>
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {premiereStatus.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="details.completionDate"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Completion Date</FormLabel>
-            <FormControl>
-              <Input type="date" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <section className="grid grid-cols-2 gap-4">
+        <FormField
+          control={form.control}
+          name="details.country"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Country</FormLabel>
+              <FormControl>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(getCodeList()).map((code) => (
+                      <SelectItem key={code} value={code}>
+                        {getName(code)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="details.language"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Language</FormLabel>
+              <FormControl>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {languages.map((lang) => (
+                      <SelectItem key={lang.code} value={lang.code}>
+                        {lang.language}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </section>
+
+      <section className="grid grid-cols-2 gap-4">
+        <FormField
+          control={form.control}
+          name="details.premiereStatus"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Premiere Status</FormLabel>
+              <FormControl>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {premiereStatus.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="details.ageRating"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Age Rating</FormLabel>
+              <FormControl>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ageRating.map((rating) => (
+                      <SelectItem key={rating} value={rating}>
+                        {rating}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </section>
+
       <FormField
         control={form.control}
         name="playlist"

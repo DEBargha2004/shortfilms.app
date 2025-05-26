@@ -21,35 +21,39 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { VideoUploadType, videoUploadTypes } from "@/constants/general";
 import { generateVideoEmbedUrl, isValidVideoUrl } from "@/functions/url-format";
 import useFileReader from "@/hooks/use-file-reader";
 import { cn } from "@/lib/utils";
 import { PostCreateSchema } from "@/schema/post-create";
 import { TFormChildrenDefaultProps } from "@/types/form-props";
 import { Link2, Upload } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { useWatch } from "react-hook-form";
 
 export default function VideoData({
   form,
 }: TFormChildrenDefaultProps<PostCreateSchema>) {
-  const [links, setLinks] = useState({
-    trailer: "",
-    video: "",
-  });
-  const [dialogState, setDialogState] = useState({
-    videoLink: false,
-    trailerLink: false,
-  });
   const { read } = useFileReader();
+  const { video, trailer } = useWatch({
+    control: form.control,
+  });
 
   const videoDropzone = useDropzone({
     async onDrop(acceptedFiles, fileRejections, event) {
       const url = await read(acceptedFiles[0]);
       if (url) {
         form.setValue("video", {
-          type: "custom",
-          url,
+          type: "video",
+          payload: url,
         });
       }
     },
@@ -64,8 +68,8 @@ export default function VideoData({
       const url = await read(acceptedFiles[0]);
       if (url) {
         form.setValue("trailer", {
-          type: "custom",
-          url,
+          type: "video",
+          payload: url,
         });
       }
     },
@@ -79,197 +83,162 @@ export default function VideoData({
     <>
       <FormField
         control={form.control}
-        name="video"
+        name="video.type"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Video</FormLabel>
+            <FormLabel>Select Upload Type</FormLabel>
             <FormControl>
-              <div
-                className={cn(
-                  "grid @lg:grid-cols-2 p-4 rounded border-2 border-dashed",
-                  "divide-y @lg:divide-y-0 @lg:divide-x"
-                )}
-              >
-                <Dialog
-                  open={dialogState.videoLink}
-                  onOpenChange={(e) =>
-                    setDialogState((prev) => ({
-                      ...prev,
-                      videoLink: e,
-                    }))
-                  }
-                >
-                  <DialogTrigger asChild>
-                    <UploadButton>
-                      <Link2 className="w-5 h-5 mb-3" />
-                      <UploadButtonTitle>Embed</UploadButtonTitle>
-                      <UploadButtonDescription>
-                        Paste a YouTube or Vimeo link
-                      </UploadButtonDescription>
-                    </UploadButton>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Embed</DialogTitle>
-                    </DialogHeader>
-                    <DialogDescription>
-                      Paste a YouTube or Vimeo link
-                    </DialogDescription>
-                    <Input
-                      value={links.video}
-                      onChange={(e) =>
-                        setLinks((prev) => ({
-                          ...prev,
-                          video: e.target.value,
-                        }))
-                      }
-                    />
-                    <DialogFooter>
-                      <Button
-                        type="button"
-                        disabled={!isValidVideoUrl(links.video)}
-                        onClick={() => {
-                          form.setValue("video", {
-                            type: "link",
-                            url: links.video,
-                          });
-
-                          setDialogState((prev) => ({
-                            ...prev,
-                            videoLink: false,
-                          }));
-                        }}
-                      >
-                        Embed
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-                <input type="file" {...videoDropzone.getInputProps()} />
-                <UploadButton {...videoDropzone.getRootProps()}>
-                  <Upload className="h-5 w-5 mb-3" />
-                  <UploadButtonTitle>Upload</UploadButtonTitle>
-                  <UploadButtonDescription>
-                    Upload a video
-                  </UploadButtonDescription>
-                </UploadButton>
-              </div>
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Upload Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {videoUploadTypes.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
+      {(video!.type as VideoUploadType) === "link" && (
+        <FormField
+          control={form.control}
+          name="video.payload"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Video Link</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="https://.." />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
+      {(video!.type as VideoUploadType) === "drive" && (
+        <FormField
+          control={form.control}
+          name="video.payload"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Google Drive Link</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="https://.." />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
+      {(video!.type as VideoUploadType) === "file" && (
+        <FormField
+          control={form.control}
+          name="video.payload"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Select File</FormLabel>
+              <FormControl>
+                <div className="border-2 rounded-lg border-dashed">
+                  <input type="file" {...videoDropzone.getInputProps()} />
+                  <UploadButton {...videoDropzone.getRootProps()}>
+                    <Upload className="h-5 w-5 mb-3" />
+                    <UploadButtonTitle>Upload</UploadButtonTitle>
+                    <UploadButtonDescription>
+                      Upload a video
+                    </UploadButtonDescription>
+                  </UploadButton>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
 
-      {form.watch("video.url") &&
-        (form.watch("video.type") === "link" ? (
-          <iframe
-            src={generateVideoEmbedUrl(form.watch("video.url"))}
-            className="w-full aspect-video"
-          />
-        ) : (
-          <video
-            src={form.watch("video.url")}
-            className="w-full aspect-video"
-            controls
-          />
-        ))}
-
+      <h2 className="text-lg pt-6 font-medium">Trailer</h2>
       <FormField
         control={form.control}
-        name="trailer"
+        name="trailer.type"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Trailer</FormLabel>
+            <FormLabel>Select Upload Type</FormLabel>
             <FormControl>
-              <div
-                className={cn(
-                  "grid @lg:grid-cols-2 p-4 rounded border-2 border-dashed",
-                  "divide-y @lg:divide-y-0 @lg:divide-x"
-                )}
-              >
-                <Dialog
-                  open={dialogState.trailerLink}
-                  onOpenChange={(e) =>
-                    setDialogState((prev) => ({
-                      ...prev,
-                      trailerLink: e,
-                    }))
-                  }
-                >
-                  <DialogTrigger asChild>
-                    <UploadButton>
-                      <Link2 className="w-5 h-5 mb-3" />
-                      <UploadButtonTitle>Embed</UploadButtonTitle>
-                      <UploadButtonDescription>
-                        Paste a YouTube or Vimeo link
-                      </UploadButtonDescription>
-                    </UploadButton>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Embed</DialogTitle>
-                    </DialogHeader>
-                    <DialogDescription>
-                      Paste a YouTube or Vimeo link
-                    </DialogDescription>
-                    <Input
-                      value={links.trailer}
-                      onChange={(e) =>
-                        setLinks((prev) => ({
-                          ...prev,
-                          trailer: e.target.value,
-                        }))
-                      }
-                    />
-                    <DialogFooter>
-                      <Button
-                        type="button"
-                        disabled={!isValidVideoUrl(links.trailer)}
-                        onClick={() => {
-                          form.setValue("trailer", {
-                            type: "link",
-                            url: links.trailer,
-                          });
-
-                          setDialogState((prev) => ({
-                            ...prev,
-                            trailerLink: false,
-                          }));
-                        }}
-                      >
-                        Embed
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-                <input type="file" {...trailerDropzone.getInputProps()} />
-                <UploadButton {...trailerDropzone.getRootProps()}>
-                  <Upload className="h-5 w-5 mb-3" />
-                  <UploadButtonTitle>Upload</UploadButtonTitle>
-                  <UploadButtonDescription>
-                    Upload a video
-                  </UploadButtonDescription>
-                </UploadButton>
-              </div>
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Upload Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {videoUploadTypes.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
-
-      {form.watch("trailer.url") &&
-        (form.watch("trailer.type") === "link" ? (
-          <iframe
-            src={generateVideoEmbedUrl(form.watch("trailer.url"))}
-            className="w-full aspect-video"
-          />
-        ) : (
-          <video
-            src={form.watch("trailer.url")}
-            className="w-full aspect-video"
-            controls
-          />
-        ))}
+      {(trailer!.type as VideoUploadType) === "link" && (
+        <FormField
+          control={form.control}
+          name="trailer.payload"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Video Link</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="https://.." />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
+      {(trailer!.type as VideoUploadType) === "drive" && (
+        <FormField
+          control={form.control}
+          name="trailer.payload"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Google Drive Link</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="https://.." />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
+      {(trailer!.type as VideoUploadType) === "file" && (
+        <FormField
+          control={form.control}
+          name="trailer.payload"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Select File</FormLabel>
+              <FormControl>
+                <div className="border-2 rounded-lg border-dashed">
+                  <input type="file" {...trailerDropzone.getInputProps()} />
+                  <UploadButton {...trailerDropzone.getRootProps()}>
+                    <Upload className="h-5 w-5 mb-3" />
+                    <UploadButtonTitle>Upload</UploadButtonTitle>
+                    <UploadButtonDescription>
+                      Upload a video
+                    </UploadButtonDescription>
+                  </UploadButton>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
     </>
   );
 }

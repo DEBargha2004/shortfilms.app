@@ -79,3 +79,30 @@ export const privatePublishing = publishingTypes.find(
 export const unlistedPublishing = publishingTypes.find(
   (type) => type.value === "unlisted"
 )!;
+
+export const videoUploadTypes = [
+  {
+    label: "Link",
+    value: "link",
+  },
+  {
+    label: "File",
+    value: "file",
+  },
+  {
+    label: "Google Drive",
+    value: "drive",
+  },
+] as const;
+
+export const videoUploadTypesIds = videoUploadTypes.map((type) => type.value);
+export type VideoUploadType = (typeof videoUploadTypesIds)[number];
+export const videoUploadTypeLink = videoUploadTypes.find(
+  (type) => type.value === "link"
+)!;
+export const videoUploadTypeFile = videoUploadTypes.find(
+  (type) => type.value === "file"
+)!;
+export const videoUploadTypeDrive = videoUploadTypes.find(
+  (type) => type.value === "drive"
+)!;

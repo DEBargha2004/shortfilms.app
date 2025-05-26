@@ -49,7 +49,7 @@ export default function SafeRemove({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="gap-2">
-          <DialogClose>
+          <DialogClose asChild>
             <Button variant={"secondary"} type="button">
               Cancel
             </Button>

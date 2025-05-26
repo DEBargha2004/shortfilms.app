@@ -1,8 +1,3 @@
-import {
-  UploadButton,
-  UploadButtonDescription,
-  UploadButtonTitle,
-} from "@/app/(app)/(pages-with-sidenav)/content/_components/upload-button";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,66 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  MultiSelect,
-  MultiSelectItemProps,
-} from "@/components/ui/multi-select";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  generateVideoEmbedUrl,
-  isValidVideoUrl,
-  isValidVimeoUrl,
-  isValidYoutubeUrl,
-} from "@/functions/url-format";
+import { Form } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { PostCreateSchema } from "@/schema/post-create";
-import { Crop, ImageIcon, Link2, Plus, Trash2, Upload, X } from "lucide-react";
-import Image from "next/image";
-import { useRef, useState } from "react";
-import { ReactCropperElement } from "react-cropper";
-import { useDropzone } from "react-dropzone";
-import { useForm, useWatch } from "react-hook-form";
-import CropperComponent from "@/components/custom/cropper";
-import { Checkbox } from "@/components/ui/checkbox";
-import { getCodeList, getName } from "country-list";
-import { languages } from "@/constants/lang";
-import {
-  ageRating,
-  genres,
-  premiereStatus,
-  techniques,
-} from "@/constants/general";
-import { Label } from "@/components/ui/label";
 import { TFormDefaultProps } from "@/types/form-props";
-import FileSelector from "@/components/custom/file-selector";
 import BasicDetails from "./basic-details";
-import useFileReader from "@/hooks/use-file-reader";
 import VideoData from "./video-data";
 import Metadata from "./metadata";
 import Categories from "./categories";
@@ -80,20 +20,7 @@ import Thumbnail from "./thumbnail";
 import Honors from "./honors";
 import Press from "./press";
 import PublishOptions from "./publish";
-
-const playlists: MultiSelectItemProps[] = [
-  "Playlist 1",
-  "Playlist 2",
-  "Playlist 3",
-  "Playlist 4",
-];
-
-const tags: MultiSelectItemProps[] = ["Tag 1", "Tag 2", "Tag 3", "Tag 4"];
-
-const publisherTypes: string[] = ["School", "Studio", "Softwares"];
-
-const MAX_SELECTABLE_GENRES = 2;
-const MAX_SELECTABLE_TECHNIQUES = 3;
+import Gallery from "./gallery";
 
 export default function PostCreateForm({
   form,
@@ -171,7 +98,9 @@ export default function PostCreateForm({
                 Add stills, poster, and behind-the-scenes content.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6"></CardContent>
+            <CardContent className="space-y-6">
+              <Gallery form={form} />
+            </CardContent>
           </Card>
           <Card>
             <CardHeader>
@@ -191,7 +120,7 @@ export default function PostCreateForm({
               <Thumbnail form={form} />
             </CardContent>
           </Card>
-          <Card>
+          <Card className="@4xl:sticky @4xl:top-24">
             <CardContent className="pt-4 space-y-4">
               <PublishOptions form={form} />
             </CardContent>

@@ -9,14 +9,14 @@ const isPrivateRoute = (path: string) =>
 export default async function middleware(req: NextRequest) {
   const isPrivateRouteMatched = isPrivateRoute(req.nextUrl.pathname);
 
-  // if (isPrivateRouteMatched && !req.cookies?.get("jwt")) {
-  //   const onSuccessUrl = req.nextUrl.pathname;
+  if (isPrivateRouteMatched && !req.cookies?.get("jwt")) {
+    const onSuccessUrl = req.nextUrl.pathname;
 
-  //   const redirectUrl = new URL(`/auth/signin`, req.url);
-  //   redirectUrl.searchParams.set("redirect", onSuccessUrl);
+    const redirectUrl = new URL(`/auth/signin`, req.url);
+    redirectUrl.searchParams.set("redirect", onSuccessUrl);
 
-  //   return NextResponse.redirect(redirectUrl);
-  // }
+    return NextResponse.redirect(redirectUrl);
+  }
   return NextResponse.next();
 }
 

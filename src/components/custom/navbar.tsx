@@ -2,7 +2,13 @@
 
 import { LogOut, Menu } from "lucide-react";
 import { Button } from "../ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet";
 import { SideNavFullView } from "./side-nav";
 import ProductLogo from "./product-logo";
 import { SearchInput } from "./search-input";
@@ -87,6 +93,9 @@ export default function Navbar({
             </Button>
           </SheetTrigger>
           <SheetContent side={"left"} className="w-fit p-0 py-2">
+            <SheetHeader className="hidden">
+              <SheetTitle />
+            </SheetHeader>
             <SideNavFullView />
           </SheetContent>
         </Sheet>

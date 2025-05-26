@@ -93,30 +93,7 @@ export default function Categories({
         maxSelectable={MAX_SELECTABLE_TECHNIQUES}
         onChange={(e) => handleToggle("categories.techniques", e)}
       />
-      <FormField
-        control={form.control}
-        name="details.ageRating"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Age Rating</FormLabel>
-            <FormControl>
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {ageRating.map((rating) => (
-                    <SelectItem key={rating} value={rating}>
-                      {rating}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+
       <section className="space-y-3">
         <FormLabel>Tags</FormLabel>
         <div className="flex gap-2">

@@ -17,7 +17,7 @@ import { PostCreateSchema } from "@/schema/post-create";
 import { TFormChildrenDefaultProps } from "@/types/form-props";
 import { useWatch } from "react-hook-form";
 import IconInput from "../../icon-input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CalendarIcon, EyeIcon, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -38,6 +38,16 @@ export default function PublishOptions({
     control: form.control,
   });
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (schedulingOption?.isScheduled) {
+      const formattedDate = format(new Date(), "yyyy-MM-dd HH:mm:ss");
+      form.setValue("schedulingOption.publishDate", formattedDate);
+    } else {
+      form.setValue("schedulingOption.publishDate", "");
+    }
+  }, [schedulingOption?.isScheduled]);
+
   return (
     <>
       <FormField
@@ -118,7 +128,7 @@ export default function PublishOptions({
       )}
       <FormField
         control={form.control}
-        name="publishToSocialNetworks"
+        name="publishingOption.copyrightPermission"
         render={({ field }) => (
           <FormItem
             className={cn(
@@ -126,7 +136,7 @@ export default function PublishOptions({
               "flex flex-row-reverse items-center justify-end gap-4"
             )}
           >
-            <FormLabel>Publish to other social networks</FormLabel>
+            <FormLabel>Copyright Permission</FormLabel>
             <FormControl>
               <Checkbox
                 checked={field.value}

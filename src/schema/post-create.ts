@@ -1,16 +1,23 @@
-import { privatePublishing, publicPublishing } from "@/constants/general";
+import {
+  ageRating,
+  premiereStatus,
+  privatePublishing,
+  publicPublishing,
+  VideoUploadType,
+  videoUploadTypesIds,
+} from "@/constants/general";
 import * as z from "zod";
 
 export const postCreateSchema = z.object({
   title: z.string(),
   description: z.string(),
   video: z.object({
-    url: z.string(),
-    type: z.enum(["link", "custom"]),
+    payload: z.string(),
+    type: z.string(),
   }),
   trailer: z.object({
-    url: z.string(),
-    type: z.enum(["link", "custom"]),
+    payload: z.string(),
+    type: z.string(),
   }),
   details: z.object({
     duration: z.string().refine((val) => !Number.isNaN(parseInt(val)), {
@@ -21,6 +28,7 @@ export const postCreateSchema = z.object({
     premiereStatus: z.string().min(1),
     completionDate: z.string().min(1),
     ageRating: z.string().min(1),
+    softwareUsed: z.array(z.string()),
     isPaid: z.boolean(),
   }),
   categories: z.object({
@@ -30,7 +38,6 @@ export const postCreateSchema = z.object({
   }),
   playlist: z.array(z.string()),
   thumbnail: z.string(),
-  publishToSocialNetworks: z.boolean(),
   publisherType: z.string(),
   members: z.array(z.string()),
   schedulingOption: z
@@ -69,22 +76,22 @@ export const defaultValues = (): PostCreateSchema => ({
   title: "",
   description: "",
   video: {
-    url: "",
-    type: "link",
+    payload: "",
+    type: "link" as VideoUploadType,
   },
   trailer: {
-    url: "",
-    type: "link",
+    payload: "",
+    type: "link" as VideoUploadType,
   },
   details: {
-    duration: "",
-    country: "",
-    language: "",
-    premiereStatus: "",
-    completionDate: "",
-
-    ageRating: "",
+    duration: "3",
+    country: "us",
+    language: "en",
+    premiereStatus: premiereStatus[0],
+    completionDate: "2022-01-01",
+    ageRating: ageRating[0],
     isPaid: false,
+    softwareUsed: [],
   },
   categories: {
     genres: [],
@@ -93,7 +100,6 @@ export const defaultValues = (): PostCreateSchema => ({
   },
   playlist: [],
   thumbnail: "",
-  publishToSocialNetworks: false,
   publisherType: "",
   members: [],
   publishingOption: {
