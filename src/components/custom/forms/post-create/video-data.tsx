@@ -43,8 +43,13 @@ export default function VideoData({
   form,
 }: TFormChildrenDefaultProps<PostCreateSchema>) {
   const { read } = useFileReader();
-  const { video, trailer } = useWatch({
+  const video = useWatch({
     control: form.control,
+    name: "video",
+  });
+  const trailer = useWatch({
+    control: form.control,
+    name: "trailer",
   });
 
   const videoDropzone = useDropzone({

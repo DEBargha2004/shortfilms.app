@@ -34,8 +34,13 @@ import { Input } from "@/components/ui/input";
 export default function PublishOptions({
   form,
 }: TFormChildrenDefaultProps<PostCreateSchema>) {
-  const { schedulingOption, publishingOption } = useWatch({
+  const schedulingOption = useWatch({
     control: form.control,
+    name: "schedulingOption",
+  });
+  const publishType = useWatch({
+    control: form.control,
+    name: "publishingOption.publishType",
   });
   const [showPassword, setShowPassword] = useState(false);
 
@@ -74,7 +79,7 @@ export default function PublishOptions({
           </FormItem>
         )}
       />
-      {publishingOption?.publishType === privatePublishing.value && (
+      {publishType === privatePublishing.value && (
         <FormField
           control={form.control}
           name="publishingOption.password"

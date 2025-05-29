@@ -23,6 +23,9 @@ import { languages } from "@/constants/lang";
 import { PostCreateSchema } from "@/schema/post-create";
 import { TFormChildrenDefaultProps } from "@/types/form-props";
 import { getCodeList, getName } from "country-list";
+import { useWatch } from "react-hook-form";
+import IconInput from "../../icon-input";
+import { IndianRupee } from "lucide-react";
 
 const tags: MultiSelectItemProps[] = ["Tag 1", "Tag 2", "Tag 3", "Tag 4"];
 const playlists: MultiSelectItemProps[] = [
@@ -35,6 +38,10 @@ const playlists: MultiSelectItemProps[] = [
 export default function Metadata({
   form,
 }: TFormChildrenDefaultProps<PostCreateSchema>) {
+  const isPaid = useWatch({
+    control: form.control,
+    name: "details.pricing.isPaid",
+  });
   return (
     <>
       <section className="grid grid-cols-2 gap-4">
@@ -193,7 +200,7 @@ export default function Metadata({
 
       <FormField
         control={form.control}
-        name="details.isPaid"
+        name="details.pricing.isPaid"
         render={({ field }) => (
           <FormItem className="flex justify-start items-center gap-4 space-y-0">
             <FormLabel>Paid</FormLabel>
@@ -203,6 +210,25 @@ export default function Metadata({
           </FormItem>
         )}
       />
+      {isPaid && (
+        <FormField
+          control={form.control}
+          name="details.pricing.price"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Price</FormLabel>
+              <FormControl>
+                <IconInput
+                  startIcon={<IndianRupee size={20} />}
+                  type="number"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
     </>
   );
 }

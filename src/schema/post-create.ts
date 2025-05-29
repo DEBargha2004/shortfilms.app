@@ -29,7 +29,22 @@ export const postCreateSchema = z.object({
     completionDate: z.string().min(1),
     ageRating: z.string().min(1),
     softwareUsed: z.array(z.string()),
-    isPaid: z.boolean(),
+    pricing: z
+      .object({
+        isPaid: z.boolean(),
+        price: z.string().optional(),
+      })
+      .refine(
+        ({ isPaid, price }) => {
+          if (isPaid && !price) return false;
+
+          return true;
+        },
+        {
+          message: "Price is required",
+          path: ["price"],
+        }
+      ),
   }),
   categories: z.object({
     genres: z.array(z.string()),
@@ -55,6 +70,10 @@ export const postCreateSchema = z.object({
     ),
   publishingOption: z
     .object({
+      publisher: z.object({
+        name: z.string(),
+        role: z.string(),
+      }),
       copyrightPermission: z.boolean(),
       publishType: z.string(),
       password: z.string().optional(),
@@ -90,7 +109,10 @@ export const defaultValues = (): PostCreateSchema => ({
     premiereStatus: premiereStatus[0],
     completionDate: "2022-01-01",
     ageRating: ageRating[0],
-    isPaid: false,
+    pricing: {
+      isPaid: false,
+      price: "",
+    },
     softwareUsed: [],
   },
   categories: {
@@ -103,6 +125,10 @@ export const defaultValues = (): PostCreateSchema => ({
   publisherType: "",
   members: [],
   publishingOption: {
+    publisher: {
+      name: "",
+      role: "",
+    },
     copyrightPermission: false,
     publishType: publicPublishing.value,
     password: "",
