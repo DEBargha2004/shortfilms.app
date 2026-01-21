@@ -1,7 +1,7 @@
-export default function Layout ({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className='lg:w-[400px] w-full grid lg:grid-cols-1 sm:grid-cols-2 grid-cols-1 gap-2.5'>
+    <div className="w-full ml-auto grid xl:grid-cols-1 lg:grid-cols-2 grid-cols-1 gap-2.5">
       {children}
     </div>
-  )
+  );
 }

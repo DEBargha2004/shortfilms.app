@@ -24,7 +24,8 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      "shaka-player" : ["./src/types/shaka-player/global.d.ts"]
     },
     "target": "ES2017"
   },

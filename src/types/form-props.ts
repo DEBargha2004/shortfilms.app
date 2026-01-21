@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { Control, useForm } from "react-hook-form";
 
 export type TFormDefaultProps<T extends Record<string, any>> = {
   form: ReturnType<typeof useForm<T>>;
@@ -6,5 +6,5 @@ export type TFormDefaultProps<T extends Record<string, any>> = {
 };
 
 export type TFormChildrenDefaultProps<T extends Record<string, any>> = {
-  form: ReturnType<typeof useForm<T>>;
+  control: Control<T>;
 };

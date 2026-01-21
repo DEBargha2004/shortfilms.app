@@ -3,22 +3,24 @@
 import { Button } from "@/components/ui/button";
 import useFileReader from "@/hooks/use-file-reader";
 import { cn } from "@/lib/utils";
-import { PostCreateSchema } from "@/schema/post-create";
-import { TFormChildrenDefaultProps } from "@/types/form-props";
+import { TPostCreateSchema } from "@/schema/post-create";
 import { Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { nanoid } from "nanoid";
 import SafeRemove from "../../safe-remove";
+import useFileUpload from "@/hooks/use-file-upload";
+import { hrefs } from "@/constants/hrefs";
 
-export default function Gallery({
-  form,
-}: TFormChildrenDefaultProps<PostCreateSchema>) {
+export default function Gallery() {
   const [imagesData, setImagesData] = useState<{ id: string; url: string }[]>(
     []
   );
   const { read } = useFileReader();
+  const { upload } = useFileUpload({
+    requestPresigner: hrefs.api.presignedUrl.post.gallery.invoke,
+  });
   const { getInputProps, getRootProps } = useDropzone({
     accept: {
       "image/*": [],

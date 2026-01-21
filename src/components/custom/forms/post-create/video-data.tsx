@@ -3,16 +3,6 @@ import {
   UploadButtonDescription,
   UploadButtonTitle,
 } from "@/app/(app)/(pages-with-sidenav)/content/_components/upload-button";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import {
   FormControl,
   FormField,
@@ -29,37 +19,51 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { VideoUploadType, videoUploadTypes } from "@/constants/general";
-import { generateVideoEmbedUrl, isValidVideoUrl } from "@/functions/url-format";
+import { hrefs } from "@/constants/hrefs";
 import useFileReader from "@/hooks/use-file-reader";
+import useVideoUpload from "@/hooks/use-video-upload";
 import { cn } from "@/lib/utils";
-import { PostCreateSchema } from "@/schema/post-create";
-import { TFormChildrenDefaultProps } from "@/types/form-props";
-import { Link2, Upload } from "lucide-react";
-import React, { useState } from "react";
+import { TPostCreateSchema } from "@/schema/post-create";
+import { CheckCircle2, Link2, Loader2, Upload } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { useWatch } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 
-export default function VideoData({
-  form,
-}: TFormChildrenDefaultProps<PostCreateSchema>) {
-  const { read } = useFileReader();
+export default function VideoData() {
+  const { control, setValue } = useFormContext<TPostCreateSchema>();
   const video = useWatch({
-    control: form.control,
+    control: control,
     name: "video",
   });
   const trailer = useWatch({
-    control: form.control,
+    control: control,
     name: "trailer",
   });
+  const {
+    upload: uploadVideoBody,
+    uploadPercentage: videoUploadPercentage,
+    uploadState: videoUploadState,
+  } = useVideoUpload();
+
+  const {
+    upload: uploadVideoTrailer,
+    uploadPercentage: videoTrailerUploadPercentage,
+    uploadState: videoTrailerUploadState,
+  } = useVideoUpload();
 
   const videoDropzone = useDropzone({
     async onDrop(acceptedFiles, fileRejections, event) {
-      const url = await read(acceptedFiles[0]);
-      if (url) {
-        form.setValue("video", {
-          type: "video",
-          payload: url,
-        });
+      if (acceptedFiles.length) {
+        const info = await uploadVideoBody(
+          acceptedFiles[0],
+          hrefs.api.presignedUrl.post.shortfilm
+        );
+        if (info)
+          setValue("video", {
+            type: "file",
+            path: info.videoId,
+            libraryId: info.libraryId,
+          });
       }
     },
     accept: {
@@ -70,12 +74,17 @@ export default function VideoData({
 
   const trailerDropzone = useDropzone({
     async onDrop(acceptedFiles, fileRejections, event) {
-      const url = await read(acceptedFiles[0]);
-      if (url) {
-        form.setValue("trailer", {
-          type: "video",
-          payload: url,
-        });
+      if (acceptedFiles.length) {
+        const info = await uploadVideoTrailer(
+          acceptedFiles[0],
+          hrefs.api.presignedUrl.post.trailer
+        );
+        if (info)
+          setValue("trailer", {
+            type: "file",
+            path: info.videoId,
+            libraryId: info.libraryId,
+          });
       }
     },
     accept: {
@@ -87,7 +96,7 @@ export default function VideoData({
   return (
     <>
       <FormField
-        control={form.control}
+        control={control}
         name="video.type"
         render={({ field }) => (
           <FormItem>
@@ -112,8 +121,8 @@ export default function VideoData({
       />
       {(video!.type as VideoUploadType) === "link" && (
         <FormField
-          control={form.control}
-          name="video.payload"
+          control={control}
+          name="video.href"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Video Link</FormLabel>
@@ -127,8 +136,8 @@ export default function VideoData({
       )}
       {(video!.type as VideoUploadType) === "drive" && (
         <FormField
-          control={form.control}
-          name="video.payload"
+          control={control}
+          name="video.href"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Google Drive Link</FormLabel>
@@ -142,21 +151,41 @@ export default function VideoData({
       )}
       {(video!.type as VideoUploadType) === "file" && (
         <FormField
-          control={form.control}
-          name="video.payload"
+          control={control}
+          name="video"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Select File</FormLabel>
               <FormControl>
                 <div className="border-2 rounded-lg border-dashed">
-                  <input type="file" {...videoDropzone.getInputProps()} />
-                  <UploadButton {...videoDropzone.getRootProps()}>
-                    <Upload className="h-5 w-5 mb-3" />
-                    <UploadButtonTitle>Upload</UploadButtonTitle>
-                    <UploadButtonDescription>
-                      Upload a video
-                    </UploadButtonDescription>
-                  </UploadButton>
+                  {videoUploadState.isUploading && (
+                    <UploadButton className="min-h-28 p-0 gap-4 justify-center ">
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <p className="text-sm text-muted-foreground">
+                        Uploading {videoUploadPercentage}%
+                      </p>
+                    </UploadButton>
+                  )}
+                  {videoUploadState.isUploaded && (
+                    <UploadButton className="min-h-28 p-0 gap-4 justify-center">
+                      <CheckCircle2 className="text-success" />
+                      <p className="text-sm text-muted-foreground">
+                        Video Uploaded Successfully
+                      </p>
+                    </UploadButton>
+                  )}
+                  {!videoUploadState.hasUploadStarted && (
+                    <>
+                      <input type="file" {...videoDropzone.getInputProps()} />
+                      <UploadButton {...videoDropzone.getRootProps()}>
+                        <Upload className="h-5 w-5 mb-3" />
+                        <UploadButtonTitle>Upload</UploadButtonTitle>
+                        <UploadButtonDescription>
+                          Upload a video
+                        </UploadButtonDescription>
+                      </UploadButton>
+                    </>
+                  )}
                 </div>
               </FormControl>
               <FormMessage />
@@ -165,9 +194,13 @@ export default function VideoData({
         />
       )}
 
+      {video.path && video.libraryId && (
+        <VideoPreview path={video.path} libraryId={video.libraryId} />
+      )}
+
       <h2 className="text-lg pt-6 font-medium">Trailer</h2>
       <FormField
-        control={form.control}
+        control={control}
         name="trailer.type"
         render={({ field }) => (
           <FormItem>
@@ -192,8 +225,8 @@ export default function VideoData({
       />
       {(trailer!.type as VideoUploadType) === "link" && (
         <FormField
-          control={form.control}
-          name="trailer.payload"
+          control={control}
+          name="trailer.href"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Video Link</FormLabel>
@@ -207,8 +240,8 @@ export default function VideoData({
       )}
       {(trailer!.type as VideoUploadType) === "drive" && (
         <FormField
-          control={form.control}
-          name="trailer.payload"
+          control={control}
+          name="trailer.href"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Google Drive Link</FormLabel>
@@ -222,21 +255,41 @@ export default function VideoData({
       )}
       {(trailer!.type as VideoUploadType) === "file" && (
         <FormField
-          control={form.control}
-          name="trailer.payload"
+          control={control}
+          name="trailer"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Select File</FormLabel>
               <FormControl>
                 <div className="border-2 rounded-lg border-dashed">
-                  <input type="file" {...trailerDropzone.getInputProps()} />
-                  <UploadButton {...trailerDropzone.getRootProps()}>
-                    <Upload className="h-5 w-5 mb-3" />
-                    <UploadButtonTitle>Upload</UploadButtonTitle>
-                    <UploadButtonDescription>
-                      Upload a video
-                    </UploadButtonDescription>
-                  </UploadButton>
+                  {videoTrailerUploadState.isUploading && (
+                    <UploadButton className="min-h-28 p-0 gap-4 justify-center ">
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <p className="text-sm text-muted-foreground">
+                        Uploading {videoTrailerUploadPercentage}%
+                      </p>
+                    </UploadButton>
+                  )}
+                  {videoTrailerUploadState.isUploaded && (
+                    <UploadButton className="min-h-28 p-0 gap-4 justify-center">
+                      <CheckCircle2 className="text-success" />
+                      <p className="text-sm text-muted-foreground">
+                        Video Uploaded Successfully
+                      </p>
+                    </UploadButton>
+                  )}
+                  {!videoTrailerUploadState.hasUploadStarted && (
+                    <>
+                      <input type="file" {...trailerDropzone.getInputProps()} />
+                      <UploadButton {...trailerDropzone.getRootProps()}>
+                        <Upload className="h-5 w-5 mb-3" />
+                        <UploadButtonTitle>Upload</UploadButtonTitle>
+                        <UploadButtonDescription>
+                          Upload a video
+                        </UploadButtonDescription>
+                      </UploadButton>
+                    </>
+                  )}
                 </div>
               </FormControl>
               <FormMessage />
@@ -244,6 +297,38 @@ export default function VideoData({
           )}
         />
       )}
+
+      {trailer.path && trailer.libraryId && (
+        <VideoPreview path={trailer.path} libraryId={trailer.libraryId} />
+      )}
     </>
+  );
+}
+
+const buildUrl = (path: string, libraryId: string) =>
+  `https://iframe.mediadelivery.net/embed/${libraryId}/${path}`;
+
+function VideoPreview({
+  path,
+  libraryId,
+}: {
+  path: string;
+  libraryId: string;
+}) {
+  const [url, setUrl] = useState(buildUrl(path, libraryId));
+
+  useEffect(() => {
+    setUrl(buildUrl(path, libraryId));
+  }, [path]);
+
+  return (
+    <iframe
+      src={url}
+      loading="lazy"
+      style={{ border: "none" }}
+      allowFullScreen={true}
+      allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+      className="size-full w-[calc(100%-2px)] aspect-video"
+    ></iframe>
   );
 }

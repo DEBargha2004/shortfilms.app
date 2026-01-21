@@ -56,14 +56,8 @@ export default function AuthProvider({
     formdata: TSignUpSchema,
     options?: Partial<AuthOptions>
   ) => {
-    if (FileVerification.isBase64(formdata.avatar)) {
-      const [res, err] = await tryCatch<
-        AxiosResponse<{ url: string; path: string }>,
-        AxiosError<ErrorResponse>
-      >(axios.get(hrefs.api.presignedUrl.userAvatar("image/webp")));
-
-      if (err) {
-        options?.onError?.(err.response?.data);
+    if (FileVerification.isBase64(formdata.avatar)) { 
+      const [res, err] = await tryCatch<AxiosResponse<{ url: string; path: string }>, AxiosError<ErrorResponse> >(axios.get(hrefs.api.presignedUrl.userAvatar("image/webp"))); if (err) { options?.onError?.(err.response?.data);
         formdata.avatar = "";
       }
       if (res) {
@@ -166,7 +160,7 @@ export default function AuthProvider({
     });
   }, []);
 
-  console.log(user);
+  // console.log(user);
 
   return (
     <authContext.Provider

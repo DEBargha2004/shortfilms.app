@@ -1,39 +1,54 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import useFileReader from "@/hooks/use-file-reader";
 import { cn } from "@/lib/utils";
-import { PostCreateSchema } from "@/schema/post-create";
-import { TFormChildrenDefaultProps } from "@/types/form-props";
-import { Crop, ImageIcon, Trash2, Upload } from "lucide-react";
+import { TPostCreateSchema } from "@/schema/post-create";
+import { Crop, ImageIcon, Loader2, Trash2, Upload } from "lucide-react";
 import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 import CropperComponent from "../../cropper";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ReactCropperElement } from "react-cropper";
+import { useFormContext, useWatch } from "react-hook-form";
+import useFileUpload from "@/hooks/use-file-upload";
+import { hrefs } from "@/constants/hrefs";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
-export default function Thumbnail({
-  form,
-}: TFormChildrenDefaultProps<PostCreateSchema>) {
+export default function Thumbnail() {
   const [dialogState, setDialogState] = useState({
     thumbnail: false,
   });
-
-  const { read } = useFileReader();
+  const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const { control, setValue } = useFormContext<TPostCreateSchema>();
   const cropperRef = useRef<ReactCropperElement>(null);
+  const { upload, isUploading } = useFileUpload({
+    requestPresigner: hrefs.api.presignedUrl.post.thumbnail.invoke,
+  });
+  const form = useFormContext<TPostCreateSchema>();
+  const thumbnailPath = useWatch({
+    control: form.control,
+    name: "thumbnail",
+  });
 
+  const thumbnail = useWatch({
+    control,
+    name: "thumbnail",
+  });
   const thumbnailDropzone = useDropzone({
     async onDrop(acceptedFiles, fileRejections, event) {
-      const url = await read(acceptedFiles[0]);
-      if (url) {
-        form.setValue("thumbnail", url);
-      }
+      upload(acceptedFiles[0]).then((v) => {
+        setValue("thumbnail", v.path);
+      });
     },
     accept: {
       "image/*": [],
@@ -42,24 +57,30 @@ export default function Thumbnail({
   });
 
   const removeThumbnail = () => {
-    form.setValue("thumbnail", "");
+    setValue("thumbnail", "");
   };
 
   const handleCrop = () => {
     if (!cropperRef.current) return;
     const url = cropperRef.current?.cropper.getCroppedCanvas().toDataURL();
-    form.setValue("thumbnail", url);
+    setValue("thumbnail", url);
 
     setDialogState((prev) => ({
       ...prev,
       thumbnail: false,
     }));
   };
+
+  useEffect(() => {
+    hrefs.api.signedUrl
+      .invoke(thumbnailPath)
+      .then((res) => setThumbnailUrl(res.data));
+  }, [thumbnailPath]);
   return (
     <>
       <input type="file" {...thumbnailDropzone.getInputProps()} />
       <FormField
-        control={form.control}
+        control={control}
         name="thumbnail"
         render={({ field }) => (
           <FormItem>
@@ -71,9 +92,9 @@ export default function Thumbnail({
                 )}
                 {...(field.value ? {} : thumbnailDropzone.getRootProps())}
               >
-                {field.value ? (
+                {thumbnailUrl ? (
                   <Image
-                    src={field.value}
+                    src={thumbnailUrl}
                     alt="thumbnail"
                     height={200}
                     width={400}
@@ -93,7 +114,7 @@ export default function Thumbnail({
       <section
         className={cn(
           "grid gap-2 mt-6",
-          form.watch("thumbnail") ? "grid-cols-2" : "grid-cols-1"
+          thumbnail ? "grid-cols-2" : "grid-cols-1"
         )}
       >
         <Button
@@ -101,10 +122,16 @@ export default function Thumbnail({
           type="button"
           {...thumbnailDropzone.getRootProps()}
         >
-          <Upload className="w-4 h-4" />
-          <span>Upload</span>
+          {isUploading ? (
+            <Loader2 className="animate-spin size-4" />
+          ) : (
+            <>
+              <Upload className="w-4 h-4" />
+              <span>Upload</span>
+            </>
+          )}
         </Button>
-        {form.watch("thumbnail") ? (
+        {thumbnail ? (
           <>
             <Dialog
               open={dialogState.thumbnail}
@@ -126,6 +153,9 @@ export default function Thumbnail({
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-[800px] bg-card pb-0">
+                <DialogHeader>
+                  <DialogTitle></DialogTitle>
+                </DialogHeader>
                 <CropperComponent
                   ref={cropperRef}
                   style={{
@@ -134,7 +164,7 @@ export default function Thumbnail({
                   }}
                   className="object-contain cropper overflow-hidden"
                   aspectRatio={16 / 9}
-                  src={form.watch("thumbnail")}
+                  src={thumbnail}
                   initialAspectRatio={16 / 9}
                   preview=".img-preview"
                   viewMode={1}

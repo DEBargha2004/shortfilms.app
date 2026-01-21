@@ -1,14 +1,14 @@
-import { PostCreateSchema } from "@/schema/post-create";
+import { TPostCreateSchema } from "@/schema/post-create";
 import { TFormChildrenDefaultProps } from "@/types/form-props";
 import SafeRemove from "../../safe-remove";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useFormContext } from "react-hook-form";
 
-export default function Honors({
-  form,
-}: TFormChildrenDefaultProps<PostCreateSchema>) {
+export default function Honors() {
+  const { control } = useFormContext<TPostCreateSchema>();
   return (
     <>
       <section className="flex justify-start items-end gap-4">

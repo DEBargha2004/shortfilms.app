@@ -5,6 +5,9 @@ const nextConfig = {
       {
         hostname: "cdnb.artstation.com",
       },
+      {
+        hostname: "nyc3.digitaloceanspaces.com",
+      },
     ],
   },
   reactStrictMode: false,
@@ -12,7 +15,7 @@ const nextConfig = {
     return [
       {
         source: "/api/v1/:path*",
-        destination: "http://localhost:4000/api/v1/:path*",
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/api/v1/:path*`,
       },
     ];
   },

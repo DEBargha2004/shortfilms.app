@@ -28,8 +28,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TableItem from "./_components/table-item";
+import { tryCatch } from "@/lib/utils";
+import { AxiosError, AxiosResponse } from "axios";
+import { hrefs } from "@/constants/hrefs";
+import { toast } from "sonner";
+import { DefaultError } from "@tanstack/react-query";
 
 type FieldType = { label: string; value: string };
 
@@ -41,6 +46,18 @@ const filter: FieldType[] = [
 
 export default function Content() {
   const [selectedFilter, setSelectedFilter] = useState(filter[0].value);
+  const [posts, setPosts] = useState<any[]>([]);
+
+  useEffect(() => {
+    (async function () {
+      const [res, err] = await tryCatch<
+        AxiosResponse,
+        AxiosError<DefaultError>
+      >(hrefs.api.post.getAll.action(hrefs.api.post.getAll.url));
+      if (err) return toast.error(err.code);
+      setPosts(res?.data ?? []);
+    })();
+  }, []);
   return (
     <div className="flex h-full w-full flex-col overflow-y-auto scroller">
       <div className="flex flex-col sm:gap-4 sm:p-0 p-1">
@@ -141,8 +158,8 @@ export default function Content() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {Array.from({ length: 10 }, (_, i) => i).map((i) => (
-                        <TableItem key={i} />
+                      {posts.map((p) => (
+                        <TableItem key={p._id} post={p} />
                       ))}
                     </TableBody>
                   </Table>

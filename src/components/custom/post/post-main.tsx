@@ -1,27 +1,29 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { ChannelOverview } from "./channel-overview";
 import { VideoContaner, VideoTitle } from "./video-container";
 import { LucideDownload, Share2, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { sample_posts } from "@/constants/sample-post";
-import { getEmbedUrl } from "@/functions/get-url";
+import VideoPlayer from "../video-player";
+import { Post } from "../../../../../backend/src/modules/post/entities/post.entity";
+import { Doc } from "../../../../../backend/src/types/doc";
+import { User } from "../../../../../backend/src/modules/user/user.entity";
 
-export default function PostMain({ id }: { id: string }) {
-  const video = sample_posts.find((p) => p.id === id)!;
-  const embedUrl = getEmbedUrl(video?.image_link_16x9);
-
+export default function PostMain({
+  post,
+}: {
+  post: Doc<Post & { user: Doc<User> }>;
+}) {
   return (
-    <VideoContaner className="grid gap-3 @container">
-      <div className="w-full aspect-video rounded-lg">
-        <iframe src={embedUrl} width="100%" height="100%" />
-      </div>
-      <VideoTitle>AWS S3 Simple Storage Service | Part - 4</VideoTitle>
+    <VideoContaner className="grid gap-3 @container h-fit" id="post-main">
+      <VideoPlayer
+        libraryId={post.video.libraryId!}
+        videoId={post.video.path!}
+      />
+      <VideoTitle>{post.title}</VideoTitle>
       <div className="flex flex-wrap justify-between items-center gap-5">
         <div className="flex @2xl:justify-start justify-between gap-4 items-center @2xl:w-fit w-full shrink-0">
-          <ChannelOverview image="" subscribers={1234} title="Piyush Garg" />
+          <ChannelOverview image="" subscribers={1234} title={post.user.name} />
           <div className="flex justify-end items-start gap-2">
             <Button className="rounded-full">Subscribe</Button>
           </div>
@@ -62,7 +64,7 @@ export const VideoActionsContainer = ({
     <div
       className={cn(
         "bg-accent/80 hover:bg-accent transition-all rounded-full p-2 px-3",
-        "flex justify-start items-center gap-3"
+        "flex justify-start items-center gap-3",
       )}
     >
       {children}

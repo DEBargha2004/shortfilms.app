@@ -68,6 +68,9 @@ export const publishingTypes = [
   },
 ] as const;
 
+export const getPublishType = (val: string) =>
+  publishingTypes.find((p) => p.value === val);
+
 export const publicPublishing = publishingTypes.find(
   (type) => type.value === "public"
 )!;
@@ -250,4 +253,4 @@ export const creditRoles = [
       { value: "0", label: "General" },
     ],
   },
-];
+] as const;

@@ -11,39 +11,60 @@ import {
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Option } from "@/types/option";
 import type { Icon } from "@/types/icon";
-import { Edit, Eye, MoreVertical, Trash2 } from "lucide-react";
-import Image from "next/image";
+import {
+  Edit,
+  Eye,
+  ImageIcon,
+  MoreVertical,
+  Pencil,
+  Trash2,
+} from "lucide-react";
+import { format } from "date-fns";
+import { getPublishType } from "@/constants/general";
+import Link from "next/link";
+import { TPostDoc } from "@/../../backend/src/modules/post/entities/post.entity";
 
 const info_options: (Option & { Icon: Icon })[] = [
-  { label: "Edit", value: "edit", Icon: Edit },
   { label: "View", value: "view", Icon: Eye },
   { label: "Delete", value: "delete", Icon: Trash2 },
 ];
 
-export default function TableItem() {
+export default function TableItem({ post }: { post: TPostDoc }) {
   return (
     <TableRow className="hover:bg-muted/50">
       <TableCell className="sm:p-2 px-0 w-fit">
-        <div className="lg:h-[180px] lg:w-[180px] h-[80px] w-[80px] grid place-items-center">
-          <Image
-            src="https://cdnb.artstation.com/p/assets/images/images/000/424/193/smaller_square/glenn-melenhorst-car0001.jpg?1443927098"
-            height={150}
-            width={150}
-            className="w-full aspect-video object-cover"
-            alt="gallery-image"
-          />
+        <div className="lg:w-[180px] w-[80px] aspect-video grid place-items-center">
+          {post.thumbnail ? (
+            <img
+              src={post.thumbnail}
+              height={150}
+              width={150}
+              className="size-full overflow-hidden object-cover"
+              alt="gallery-image"
+            />
+          ) : (
+            <div className="size-full grid place-content-center border bg-accent/50">
+              <ImageIcon />
+            </div>
+          )}
         </div>
       </TableCell>
-      <TableCell className="font-medium">Laser Lemonade Machine</TableCell>
+      <TableCell className="font-medium">{post.title}</TableCell>
       <TableCell className="max-w-[150px] md:table-cell hidden">
-        <Badge variant="outline">Draft</Badge>
+        <Badge variant="outline">
+          {getPublishType(post.publishingOption.publishType)?.label}
+        </Badge>
       </TableCell>
-      <TableCell className="">$29</TableCell>
-      <TableCell className="hidden md:table-cell">
-        Artwork, Shortfilm,
+      <TableCell className="">
+        {post.details.pricing.isPaid
+          ? `$${post.details.pricing.price}`
+          : `Free`}
       </TableCell>
       <TableCell className="hidden md:table-cell">
-        2023-07-12 10:42 AM
+        {post.categories.tags.join(", ")}
+      </TableCell>
+      <TableCell className="hidden md:table-cell">
+        {format(post.createdAt, "PPP")}
       </TableCell>
       <TableCell className="px-0">
         <DropdownMenu>
@@ -52,15 +73,23 @@ export default function TableItem() {
               aria-haspopup="true"
               size="icon"
               variant="ghost"
-              className="px-0"
+              className="rounded-full"
             >
               <MoreVertical />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent
+            align="end"
+            className="[&_svg]:size-4 [&_svg]:mr-2"
+          >
+            <Link href={`/content/${post._id}/edit`}>
+              <DropdownMenuItem>
+                <Pencil /> <span>Edit</span>
+              </DropdownMenuItem>
+            </Link>
             {info_options.map((item) => (
               <DropdownMenuItem key={item.value}>
-                <item.Icon className="mr-2 h-4" />
+                <item.Icon />
                 {item.label}
               </DropdownMenuItem>
             ))}

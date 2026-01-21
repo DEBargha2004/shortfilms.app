@@ -13,50 +13,40 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { privatePublishing, publishingTypes } from "@/constants/general";
-import { PostCreateSchema } from "@/schema/post-create";
-import { TFormChildrenDefaultProps } from "@/types/form-props";
-import { useWatch } from "react-hook-form";
+import { TPostCreateSchema } from "@/schema/post-create";
+import { useFormContext, useWatch } from "react-hook-form";
 import IconInput from "../../icon-input";
 import { useEffect, useState } from "react";
-import { CalendarIcon, EyeIcon, EyeOff } from "lucide-react";
+import { EyeIcon, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 
-export default function PublishOptions({
-  form,
-}: TFormChildrenDefaultProps<PostCreateSchema>) {
+export default function PublishOptions() {
+  const { control, setValue } = useFormContext<TPostCreateSchema>();
   const schedulingOption = useWatch({
-    control: form.control,
+    control: control,
     name: "schedulingOption",
   });
   const publishType = useWatch({
-    control: form.control,
+    control: control,
     name: "publishingOption.publishType",
   });
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (schedulingOption?.isScheduled) {
-      const formattedDate = format(new Date(), "yyyy-MM-dd HH:mm:ss");
-      form.setValue("schedulingOption.publishDate", formattedDate);
+      setValue("schedulingOption.publishDate", new Date());
     } else {
-      form.setValue("schedulingOption.publishDate", "");
+      setValue("schedulingOption.publishDate", undefined);
     }
   }, [schedulingOption?.isScheduled]);
 
   return (
     <>
       <FormField
-        control={form.control}
+        control={control}
         name="publishingOption.publishType"
         render={({ field }) => (
           <FormItem>
@@ -81,7 +71,7 @@ export default function PublishOptions({
       />
       {publishType === privatePublishing.value && (
         <FormField
-          control={form.control}
+          control={control}
           name="publishingOption.password"
           render={({ field }) => (
             <FormItem>
@@ -97,12 +87,13 @@ export default function PublishOptions({
                   }
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
       )}
       <FormField
-        control={form.control}
+        control={control}
         name="schedulingOption.isScheduled"
         render={({ field }) => (
           <FormItem className="flex items-center gap-4 space-y-0">
@@ -118,13 +109,22 @@ export default function PublishOptions({
       />
       {schedulingOption?.isScheduled && (
         <FormField
-          control={form.control}
+          control={control}
           name="schedulingOption.publishDate"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Publish Date</FormLabel>
               <FormControl>
-                <Input type="datetime-local" {...field} />
+                <Input
+                  type="datetime-local"
+                  {...field}
+                  value={
+                    field.value
+                      ? format(field.value, "yyyy-MM-dd'T'HH:mm:ss")
+                      : ""
+                  }
+                  onChange={(e) => field.onChange(new Date(e.target.value))}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -132,22 +132,20 @@ export default function PublishOptions({
         />
       )}
       <FormField
-        control={form.control}
+        control={control}
         name="publishingOption.copyrightPermission"
         render={({ field }) => (
-          <FormItem
-            className={cn(
-              "space-y-0",
-              "flex flex-row-reverse items-center justify-end gap-4"
-            )}
-          >
-            <FormLabel>Copyright Permission</FormLabel>
-            <FormControl>
-              <Checkbox
-                checked={field.value}
-                onCheckedChange={field.onChange}
-              />
-            </FormControl>
+          <FormItem className={cn("space-y-0", "flex flex-col gap-4")}>
+            <div className="flex flex-row-reverse gap-4 justify-end items-center">
+              <FormLabel>Copyright Permission</FormLabel>
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </div>
+            <FormMessage className="" />
           </FormItem>
         )}
       />

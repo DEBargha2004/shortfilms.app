@@ -112,7 +112,7 @@ export default function Navbar({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="size-8">
-                <AvatarImage src={user.avatar} />
+                <AvatarImage src={user.avatar} className="object-cover" />
                 <AvatarFallback>{getAcronym(user.name ?? "")}</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>

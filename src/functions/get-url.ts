@@ -7,9 +7,6 @@ export const getEmbedUrl = (url: string) => {
   }
 };
 
-export const getThumbnailUrl = (url: string) => {
-  const patternObj = patterns.find((pattern) => pattern.test(url));
-  if (patternObj) {
-    return patternObj.getThumbnailUrl(patternObj.getVideoId(url));
-  }
+export const getThumbnailUrl = (videoId: string) => {
+  return `https://${process.env.NEXT_PUBLIC_PULLZONE_URL}/${videoId}/thumbnail.jpg`;
 };

@@ -1,45 +1,33 @@
-import { PostCreateSchema } from "@/schema/post-create";
-import { TFormChildrenDefaultProps } from "@/types/form-props";
+import { TPostCreateSchema } from "@/schema/post-create";
 import CheckboxGroup from "./components/checkbox-group";
-import { ageRating, genres, techniques } from "@/constants/general";
-import { useWatch } from "react-hook-form";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useFormContext, useWatch } from "react-hook-form";
+import { FormLabel } from "@/components/ui/form";
+
 import { Input } from "@/components/ui/input";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, X } from "lucide-react";
+import { usePostStore } from "@/store/post-store";
 
 const MAX_SELECTABLE_GENRES = 2;
 const MAX_SELECTABLE_TECHNIQUES = 3;
 
-export default function Categories({
-  form,
-}: TFormChildrenDefaultProps<PostCreateSchema>) {
+export default function Categories() {
   const topicInputRef = useRef<HTMLInputElement>(null);
+  const { getValues, setValue, control } = useFormContext<TPostCreateSchema>();
+
+  const { genres, techniques } = usePostStore();
 
   const selectedGenres = useWatch({
-    control: form.control,
+    control: control,
     name: "categories.genres",
   });
   const selectedTechniques = useWatch({
-    control: form.control,
+    control: control,
     name: "categories.techniques",
   });
   const selectedTags = useWatch({
-    control: form.control,
+    control: control,
     name: "categories.tags",
   });
 
@@ -47,13 +35,13 @@ export default function Categories({
     key: "categories.genres" | "categories.techniques",
     value: string
   ) => {
-    if (form.getValues(key).includes(value)) {
-      form.setValue(
+    if (getValues(key).includes(value)) {
+      setValue(
         key,
-        form.getValues(key).filter((v) => v !== value)
+        getValues(key).filter((v) => v !== value)
       );
     } else {
-      form.setValue(key, form.getValues(key).concat(value));
+      setValue(key, getValues(key).concat(value));
     }
   };
 
@@ -61,34 +49,33 @@ export default function Categories({
     const topicTemp = topicInputRef.current?.value;
 
     if (!topicTemp) return;
-    form.setValue("categories.tags", [
-      topicTemp,
-      ...form.getValues("categories.tags"),
-    ]);
+    setValue("categories.tags", [topicTemp, ...getValues("categories.tags")]);
 
     topicInputRef.current.value = "";
   };
 
   const handleRemoveTopic = (topic: string) => {
-    form.setValue(
+    setValue(
       "categories.tags",
-      form.getValues("categories.tags").filter((t) => t !== topic)
+      getValues("categories.tags").filter((t) => t !== topic)
     );
   };
   return (
     <>
       <CheckboxGroup
         title="GENRE"
+        name="categories.genres"
         description={`Select up to ${MAX_SELECTABLE_GENRES}`}
-        list={genres}
+        list={genres?.map((g) => g.name) || []}
         selected={selectedGenres}
         maxSelectable={MAX_SELECTABLE_GENRES}
         onChange={(e) => handleToggle("categories.genres", e)}
       />
       <CheckboxGroup
         title="TECHNIQUE"
+        name="categories.techniques"
         description={`Select up to ${MAX_SELECTABLE_TECHNIQUES}`}
-        list={techniques}
+        list={techniques?.map((t) => t.name) || []}
         selected={selectedTechniques}
         maxSelectable={MAX_SELECTABLE_TECHNIQUES}
         onChange={(e) => handleToggle("categories.techniques", e)}

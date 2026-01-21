@@ -9,30 +9,32 @@ import {
 import * as z from "zod";
 
 export const postCreateSchema = z.object({
-  title: z.string(),
+  title: z.string().min(3),
   description: z.string(),
   video: z.object({
-    payload: z.string(),
+    path: z.string().optional(),
+    libraryId: z.string().optional(),
+    href: z.string().optional(),
     type: z.string(),
   }),
   trailer: z.object({
-    payload: z.string(),
+    path: z.string().optional(),
+    libraryId: z.string().optional(),
+    href: z.string().optional(),
     type: z.string(),
   }),
   details: z.object({
-    duration: z.string().refine((val) => !Number.isNaN(parseInt(val)), {
-      message: "Duration must be a number",
-    }),
+    duration: z.coerce.string({ required_error: "Duration can't be empty" }),
     country: z.string().min(1),
     language: z.string().min(1),
     premiereStatus: z.string().min(1),
-    completionDate: z.string().min(1),
+    completionDate: z.coerce.date(),
     ageRating: z.string().min(1),
-    softwareUsed: z.array(z.string()),
+    softwareUsed: z.array(z.string()).min(1),
     pricing: z
       .object({
         isPaid: z.boolean(),
-        price: z.string().optional(),
+        price: z.coerce.number().optional(),
       })
       .refine(
         ({ isPaid, price }) => {
@@ -47,18 +49,26 @@ export const postCreateSchema = z.object({
       ),
   }),
   categories: z.object({
-    genres: z.array(z.string()),
-    techniques: z.array(z.string()),
+    genres: z.array(z.string()).length(2, { message: "Select 2 genres" }),
+    techniques: z
+      .array(z.string())
+      .length(3, { message: "Select 3 techniques" }),
     tags: z.array(z.string()),
   }),
+  press: z.array(
+    z.object({
+      url: z.string(),
+      title: z.string(),
+      description: z.string().optional(),
+      logo: z.string().optional(),
+    })
+  ),
   playlist: z.array(z.string()),
   thumbnail: z.string(),
-  publisherType: z.string(),
-  members: z.array(z.string()),
   schedulingOption: z
     .object({
       isScheduled: z.boolean(),
-      publishDate: z.string().optional(),
+      publishDate: z.coerce.date().optional(),
     })
     .refine(
       ({ isScheduled, publishDate }) => {
@@ -68,38 +78,61 @@ export const postCreateSchema = z.object({
       },
       { message: "Publish date is required", path: ["publishDate"] }
     ),
+  credits: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      role: z.string(),
+      image: z.string().optional(),
+    })
+  ),
   publishingOption: z
     .object({
-      publisher: z.object({
-        name: z.string(),
-        role: z.string(),
-      }),
       copyrightPermission: z.boolean(),
       publishType: z.string(),
       password: z.string().optional(),
     })
     .refine(
       (data) => {
-        if (data.publishType === privatePublishing.value && data.password)
-          return true;
+        if (data.publishType === privatePublishing.value)
+          if (data.password) {
+            return true;
+          } else {
+            return false;
+          }
+        return true;
       },
       {
         message: "Password is required",
         path: ["password"],
       }
-    ),
+    )
+    .refine((data) => data.copyrightPermission, {
+      message: "Copyright Permission is required",
+      path: ["copyrightPermission"],
+    }),
 });
 
-export type PostCreateSchema = z.infer<typeof postCreateSchema>;
-export const defaultValues = (): PostCreateSchema => ({
+export type TPostCreateSchema = z.infer<typeof postCreateSchema>;
+export const defaultPostCredit: TPostCreateSchema["credits"][number] = {
+  id: "",
+  name: "",
+  role: "",
+  image: "",
+};
+export const defaultValues = (): TPostCreateSchema => ({
   title: "",
   description: "",
   video: {
-    payload: "",
+    path: "",
+    libraryId: "",
+    href: "",
     type: "link" as VideoUploadType,
   },
   trailer: {
-    payload: "",
+    path: "",
+    libraryId: "",
+    href: "",
     type: "link" as VideoUploadType,
   },
   details: {
@@ -107,11 +140,11 @@ export const defaultValues = (): PostCreateSchema => ({
     country: "us",
     language: "en",
     premiereStatus: premiereStatus[0],
-    completionDate: "2022-01-01",
+    completionDate: new Date(),
     ageRating: ageRating[0],
     pricing: {
       isPaid: false,
-      price: "",
+      price: 0,
     },
     softwareUsed: [],
   },
@@ -120,21 +153,17 @@ export const defaultValues = (): PostCreateSchema => ({
     techniques: [],
     tags: [],
   },
+  press: [],
   playlist: [],
   thumbnail: "",
-  publisherType: "",
-  members: [],
+  credits: [],
   publishingOption: {
-    publisher: {
-      name: "",
-      role: "",
-    },
     copyrightPermission: false,
     publishType: publicPublishing.value,
     password: "",
   },
   schedulingOption: {
     isScheduled: false,
-    publishDate: "",
+    publishDate: new Date(),
   },
 });

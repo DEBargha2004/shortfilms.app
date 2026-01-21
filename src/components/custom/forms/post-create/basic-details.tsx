@@ -7,17 +7,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { PostCreateSchema } from "@/schema/post-create";
+import { TPostCreateSchema } from "@/schema/post-create";
 import { TFormChildrenDefaultProps } from "@/types/form-props";
 import React from "react";
+import { useFormContext } from "react-hook-form";
 
-export default function BasicDetails({
-  form,
-}: TFormChildrenDefaultProps<PostCreateSchema>) {
+export default function BasicDetails() {
+  const { control } = useFormContext<TPostCreateSchema>();
   return (
     <>
       <FormField
-        control={form.control}
+        control={control}
         name="title"
         render={({ field }) => (
           <FormItem>
@@ -31,7 +31,7 @@ export default function BasicDetails({
       />
 
       <FormField
-        control={form.control}
+        control={control}
         name="description"
         render={({ field }) => (
           <FormItem>

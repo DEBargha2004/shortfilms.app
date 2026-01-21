@@ -1,15 +1,19 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Orientation, type Post } from "@/types/post";
+import { Orientation } from "@/types/post";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { calculateTimeDiffWithUnit } from "@/functions/calculate-time-diff-with-unit";
 import Link from "next/link";
 import { hrefs } from "@/constants/hrefs";
 import { MoreVertical } from "lucide-react";
 import { templateClass } from "@/constants/template-class";
-import { getEmbedUrl, getThumbnailUrl } from "@/functions/get-url";
-import Image from "next/image";
+import { getThumbnailUrl } from "@/functions/get-url";
+import { Post } from "../../../../../backend/src/modules/post/entities/post.entity";
+import { Doc } from "../../../../../backend/src/types/doc";
+import { User } from "../../../../../backend/src/modules/user/user.entity";
+
+type TPost = Doc<Post> & { user: Doc<User> };
 
 export default function PostCard({
   post,
@@ -17,7 +21,7 @@ export default function PostCard({
   orientation = "vertical",
   hideAvatar,
 }: {
-  post: Post;
+  post: TPost;
   className?: string;
   hideAvatar?: boolean;
   orientation?: Orientation;
@@ -25,29 +29,29 @@ export default function PostCard({
   return (
     <PostcardWrapper orientation={orientation} className={cn("", className)}>
       <Link
-        href={hrefs.post(post.id)}
+        href={hrefs.post(post._id)}
         className={cn("shrink-0", templateClass.post.video(orientation))}
         scroll={false}
       >
         <div className={cn("w-full aspect-video rounded overflow-hidden")}>
           <img
-            src={getThumbnailUrl(post.image_link_16x9)}
+            src={post.thumbnail ?? getThumbnailUrl(post.video?.path || "")}
             className="w-full aspect-video"
           />
         </div>
       </Link>
       <div className="w-full flex justify-between gap-3 items-start">
-        <Link href={hrefs.user(post.username)}>
+        <Link href={hrefs.user(post.user?.name ?? "")}>
           <Avatar
             className={cn(
               "w-8 h-8",
               hideAvatar
                 ? "hidden"
                 : orientation === "vertical"
-                ? "block"
-                : orientation === "horizontal"
-                ? "hidden"
-                : "lg:hidden block"
+                  ? "block"
+                  : orientation === "horizontal"
+                    ? "hidden"
+                    : "lg:hidden block",
             )}
           >
             <AvatarImage />
@@ -56,28 +60,28 @@ export default function PostCard({
         </Link>
 
         <div className="w-full flex flex-col justify-start items-start">
-          <Link href={hrefs.post(post.id)}>
+          <Link href={hrefs.post(post._id?.toString())}>
             <h2
               className={cn(
                 "line-clamp-2",
                 orientation === "vertical"
                   ? "@lg:text-lg text-base"
-                  : "@lg:text-base text-sm"
+                  : "@lg:text-base text-sm",
               )}
             >
               {post.title}
             </h2>
           </Link>
-          <Link href={hrefs.user(post.username)}>
+          <Link href={hrefs.user(post.user?.name ?? "")}>
             <p
               className={cn(
                 "opacity-60",
                 orientation === "vertical"
                   ? "@lg:text-base text-sm "
-                  : "@lg:text-base text-sm"
+                  : "@lg:text-base text-sm",
               )}
             >
-              {post.username}
+              {post.user?.name ?? ""}
             </p>
           </Link>
           <div
@@ -85,18 +89,18 @@ export default function PostCard({
               "flex justify-start items-center gap-2 [&>p]:opacity-60",
               orientation === "vertical"
                 ? "@lg:[&>p]:text-sm [&>p]:text-xs"
-                : "@lg:[&>p]:text-sm [&>p]:text-xs"
+                : "@lg:[&>p]:text-sm [&>p]:text-xs",
             )}
           >
             <p>27K Views</p>
             <p>•</p>
-            <p>{calculateTimeDiffWithUnit(post.timestamp)}&nbsp;ago</p>
+            <p>{calculateTimeDiffWithUnit(post.createdAt)}&nbsp;ago</p>
           </div>
         </div>
         <div className="flex self-stretch items-start justify-center w-5">
           <div
             className={cn(
-              "rounded-full h-8 w-8 grid place-content-center hover:bg-accent/60 transition-all shrink-0"
+              "rounded-full h-8 w-8 grid place-content-center hover:bg-accent/60 transition-all shrink-0",
             )}
           >
             <MoreVertical className={cn("cursor-pointer w-4 h-4")} />
@@ -124,8 +128,8 @@ export function PostcardWrapper({
         orientation === "vertical"
           ? "flex-col"
           : orientation === "horizontal"
-          ? "flex-row"
-          : "lg:flex-row flex-col"
+            ? "flex-row"
+            : "lg:flex-row flex-col",
       )}
     >
       {children}

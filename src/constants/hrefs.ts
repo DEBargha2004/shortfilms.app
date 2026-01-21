@@ -1,3 +1,12 @@
+import { Category } from "@/types/post";
+import axios from "axios";
+import { Post } from "../../../backend/src/modules/post/entities/post.entity";
+import { Doc } from "../../../backend/src/types/doc";
+import { User } from "../../../backend/src/modules/user/user.entity";
+
+type FeedGroup = Category & { contents: any[] };
+export type TPresignedUrl = { url: string; path: string };
+
 export const hrefs = {
   home: "/",
   post: (id: string) => `/post/${id}`,
@@ -19,6 +28,41 @@ export const hrefs = {
     presignedUrl: {
       userAvatar: (mimetype: string) =>
         `/api/v1/storage/user/profile?mimetype=${mimetype}`,
+      post: {
+        trailer: (mimetype: string) =>
+          `/api/v1/storage/post/video/trailer?mimetype=${mimetype}`,
+        shortfilm: (mimetype: string) =>
+          `/api/v1/storage/post/video/shortfilm?mimetype=${mimetype}`,
+        thumbnail: {
+          url: (mimetype: string) =>
+            `/api/v1/storage/post/thumbnail?mimetype=${mimetype}`,
+          action: axios.get,
+          invoke: function (mimetype: string) {
+            console.log(this);
+            return hrefs.api.presignedUrl.post.thumbnail.action<TPresignedUrl>(
+              hrefs.api.presignedUrl.post.thumbnail.url(mimetype)
+            );
+          },
+        },
+        gallery: {
+          url(mimetype: string) {
+            return `/api/v1/storage/post/gallery?mimetype=${mimetype}`;
+          },
+          action: axios.get,
+          invoke: function (mimetype: string) {
+            return hrefs.api.presignedUrl.post.gallery.action<TPresignedUrl>(
+              hrefs.api.presignedUrl.post.gallery.url(mimetype)
+            );
+          },
+        },
+      },
+    },
+    signedUrl: {
+      url: (path: string) => `/api/v1/storage/signed-url?path=${path}`,
+      action: axios.get,
+      invoke: function (path: string) {
+        return hrefs.api.signedUrl.action(hrefs.api.signedUrl.url(path));
+      },
     },
     auth: {
       signup: `/api/v1/auth/signup`,
@@ -30,6 +74,79 @@ export const hrefs = {
     },
     user: {
       currentUser: `/api/v1/user`,
+      search: (query: string) => `/api/v1/user/search?query=${query}`,
+    },
+    post: {
+      create: {
+        url: `/api/v1/post/create`,
+        action: axios.post,
+      },
+      update: {
+        url: (id: string) => `/api/v1/post/${id}/edit`,
+        action: axios.put,
+      },
+      getPost: {
+        url: (id: string, origin?: string) =>
+          `${origin ?? ""}/api/v1/post/${id}`,
+        action: axios.get,
+        invoke: function (id: string, origin?: string) {
+          return this.action<Doc<Post & { user: Doc<User> }>>(
+            this.url(id, origin)
+          );
+        },
+      },
+      getAll: {
+        url: `/api/v1/post/all`,
+        action: axios.get,
+      },
+      getPostOfUser: {
+        url: (id: string) => `/api/v1/post/creator/${id}`,
+        action: axios.get,
+      },
+      getGenres: {
+        url: `/api/v1/post/categories/genre`,
+        action: axios.get,
+        invoke: function () {
+          return this.action<Category[]>(this.url);
+        },
+      },
+      getTechniques: {
+        url: `/api/v1/post/categories/technique`,
+        action: axios.get,
+        invoke: function () {
+          return this.action<Category[]>(this.url);
+        },
+      },
+      feed: {
+        url: `/api/v1/post/feed`,
+        action: axios.get,
+        invoke: function (origin?: string) {
+          return this.action<FeedGroup[]>(
+            origin ? `${origin}${this.url}` : this.url
+          );
+        },
+      },
+    },
+    playlist: {
+      create: {
+        url: `/api/v1/playlist/create`,
+        action: axios.post,
+      },
+      getAll: {
+        url: `/api/v1/playlist`,
+        action: axios.get,
+      },
+    },
+    stream: {
+      manifest: (videoId: string) => `/api/v1/stream/${videoId}/manifest.mpd`,
+      segments: (videoId: string, path: string) =>
+        `/api/v1/stream/${videoId}/${path}`,
+    },
+    siteMeta: {
+      fetch: {
+        url: (query: string) => `/api/v1/site-metadata?url=${query}`,
+        action: axios.get,
+      },
     },
   },
 } as const;

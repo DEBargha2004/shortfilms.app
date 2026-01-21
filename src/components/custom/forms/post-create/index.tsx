@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-import { PostCreateSchema } from "@/schema/post-create";
+import { TPostCreateSchema } from "@/schema/post-create";
 import { TFormDefaultProps } from "@/types/form-props";
 import BasicDetails from "./basic-details";
 import VideoData from "./video-data";
@@ -17,15 +17,15 @@ import Metadata from "./metadata";
 import Categories from "./categories";
 import Credits from "./credits";
 import Thumbnail from "./thumbnail";
-import Honors from "./honors";
 import Press from "./press";
 import PublishOptions from "./publish";
 import Gallery from "./gallery";
+import { Loader2 } from "lucide-react";
 
 export default function PostCreateForm({
   form,
   onSubmit,
-}: TFormDefaultProps<PostCreateSchema>) {
+}: TFormDefaultProps<TPostCreateSchema>) {
   return (
     <Form {...form}>
       <form
@@ -34,13 +34,13 @@ export default function PostCreateForm({
       >
         <div
           className={cn(
-            "grid auto-rows-max items-start gap-4 @4xl:col-span-2 @7xl:col-span-2 lg:gap-8",
+            "grid w-full gap-4 @4xl:col-span-2 @7xl:col-span-2 lg:gap-8",
             "@container"
           )}
         >
           <Card>
             <CardContent className="space-y-4 pt-4">
-              <BasicDetails form={form} />
+              <BasicDetails />
             </CardContent>
           </Card>
           <Card>
@@ -48,7 +48,7 @@ export default function PostCreateForm({
               <CardTitle>Video</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 ">
-              <VideoData form={form} />
+              <VideoData />
             </CardContent>
           </Card>
           <Card>
@@ -56,10 +56,10 @@ export default function PostCreateForm({
               <CardTitle>Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <Metadata form={form} />
+              <Metadata />
             </CardContent>
           </Card>
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle>Honors</CardTitle>
               <CardDescription>
@@ -69,9 +69,9 @@ export default function PostCreateForm({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <Honors form={form} />
+              <Honors />
             </CardContent>
-          </Card>
+          </Card> */}
           <Card>
             <CardHeader>
               <CardTitle>Press</CardTitle>
@@ -80,7 +80,7 @@ export default function PostCreateForm({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <Press form={form} />
+              <Press />
             </CardContent>
           </Card>
           <Card>
@@ -88,10 +88,10 @@ export default function PostCreateForm({
               <CardTitle>Categories</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <Categories form={form} />
+              <Categories />
             </CardContent>
           </Card>
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle>Gallery</CardTitle>
               <CardDescription>
@@ -99,15 +99,15 @@ export default function PostCreateForm({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <Gallery form={form} />
+              <Gallery />
             </CardContent>
-          </Card>
+          </Card> */}
           <Card>
             <CardHeader>
               <CardTitle>Credits</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Credits form={form} />
+              <Credits />
             </CardContent>
           </Card>
         </div>
@@ -117,16 +117,25 @@ export default function PostCreateForm({
               <CardTitle>Thumbnail</CardTitle>
             </CardHeader>
             <CardContent>
-              <Thumbnail form={form} />
+              <Thumbnail />
             </CardContent>
           </Card>
           <Card className="@4xl:sticky @4xl:top-24">
             <CardContent className="pt-4 space-y-4">
-              <PublishOptions form={form} />
+              <PublishOptions />
             </CardContent>
             <CardFooter>
-              <Button variant={"success"} className="w-full">
-                Publish
+              <Button
+                variant={"success"}
+                type="submit"
+                className="w-full"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  "Publish"
+                )}
               </Button>
             </CardFooter>
           </Card>
