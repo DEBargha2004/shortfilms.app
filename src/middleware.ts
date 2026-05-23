@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import micromatch from "micromatch";
 
-const privateRoutes = ["/content/**"];
+const privateRoutes = ["/content/**", "/genres/**", "/techniques/**", "/verification/**"];
 
 const isPrivateRoute = (path: string) =>
   micromatch.isMatch(path, privateRoutes);
@@ -9,7 +9,7 @@ const isPrivateRoute = (path: string) =>
 export default async function middleware(req: NextRequest) {
   const isPrivateRouteMatched = isPrivateRoute(req.nextUrl.pathname);
 
-  if (isPrivateRouteMatched && !req.cookies?.get("jwt")) {
+  if (isPrivateRouteMatched && !req.cookies?.get("user")) {
     const onSuccessUrl = req.nextUrl.pathname;
 
     const redirectUrl = new URL(`/auth/signin`, req.url);

@@ -1,19 +1,24 @@
 "use client";
 
-import { useRef } from "react";
-import dynamic from "next/dynamic";
+import { TPostCreateSchema } from "@/schema/post-create";
+import { YoutubePreview } from "../forms/post-create/video-data";
 
 export default function VideoPlayer({
-  libraryId,
-  videoId,
+  video,
 }: {
-  videoId: string;
-  libraryId: string;
+  video: TPostCreateSchema["video"];
 }) {
+  if (video.type === "link")
+    return (
+      <div className="relative w-full aspect-video max-h-[calc(100dvh-200px)] border mx-auto">
+        <YoutubePreview url={video.href ?? ""} />
+      </div>
+    );
+
   return (
     <div className="relative w-full aspect-video max-h-[calc(100dvh-200px)] border mx-auto">
       <iframe
-        src={`https://iframe.mediadelivery.net/embed/${libraryId}/${videoId}?autoplay=true`}
+        src={`https://iframe.mediadelivery.net/embed/${video.libraryId}/${video.path}?autoplay=true`}
         loading="lazy"
         style={{ border: "none" }}
         allowFullScreen={true}

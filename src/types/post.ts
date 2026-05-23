@@ -9,4 +9,5 @@ export type Post = {
 
 export type Orientation = "vertical" | "horizontal" | "adjust";
 
-export type Category = { _id: string; name: string };
+export type Genre = { id: string; name: string; createdAt?: string };
+export type Technique = { id: string; name: string; createdAt?: string };

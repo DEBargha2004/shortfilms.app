@@ -3,8 +3,8 @@ import {
   premiereStatus,
   privatePublishing,
   publicPublishing,
+  VIDEO_UPLOAD_TYPES,
   VideoUploadType,
-  videoUploadTypesIds,
 } from "@/constants/general";
 import * as z from "zod";
 
@@ -15,13 +15,13 @@ export const postCreateSchema = z.object({
     path: z.string().optional(),
     libraryId: z.string().optional(),
     href: z.string().optional(),
-    type: z.string(),
+    type: z.enum(VIDEO_UPLOAD_TYPES),
   }),
   trailer: z.object({
     path: z.string().optional(),
     libraryId: z.string().optional(),
     href: z.string().optional(),
-    type: z.string(),
+    type: z.enum(VIDEO_UPLOAD_TYPES),
   }),
   details: z.object({
     duration: z.coerce.string({ required_error: "Duration can't be empty" }),
@@ -45,7 +45,7 @@ export const postCreateSchema = z.object({
         {
           message: "Price is required",
           path: ["price"],
-        }
+        },
       ),
   }),
   categories: z.object({
@@ -61,7 +61,7 @@ export const postCreateSchema = z.object({
       title: z.string(),
       description: z.string().optional(),
       logo: z.string().optional(),
-    })
+    }),
   ),
   playlist: z.array(z.string()),
   thumbnail: z.string(),
@@ -76,7 +76,7 @@ export const postCreateSchema = z.object({
 
         return true;
       },
-      { message: "Publish date is required", path: ["publishDate"] }
+      { message: "Publish date is required", path: ["publishDate"] },
     ),
   credits: z.array(
     z.object({
@@ -84,7 +84,7 @@ export const postCreateSchema = z.object({
       name: z.string(),
       role: z.string(),
       image: z.string().optional(),
-    })
+    }),
   ),
   publishingOption: z
     .object({
@@ -105,7 +105,7 @@ export const postCreateSchema = z.object({
       {
         message: "Password is required",
         path: ["password"],
-      }
+      },
     )
     .refine((data) => data.copyrightPermission, {
       message: "Copyright Permission is required",

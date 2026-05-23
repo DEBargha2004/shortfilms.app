@@ -21,7 +21,7 @@ export default function CheckboxGroup({
 }: {
   title: string;
   description: string;
-  list: string[];
+  list: { id: string; name: string }[];
   selected: string[];
   maxSelectable: number;
   onChange: (e: string) => void;
@@ -47,17 +47,17 @@ export default function CheckboxGroup({
       />
       <div className="grid @2xl:grid-cols-4 grid-cols-3 gap-5 gap-y-8 mt-5">
         {list.map((t) => (
-          <div className="flex justify-start items-center gap-3" key={t}>
+          <div className="flex justify-start items-center gap-3" key={t.id}>
             <Checkbox
               className="size-5"
               disabled={
-                !(selected.length < maxSelectable || selected.includes(t))
+                !(selected.length < maxSelectable || selected.includes(t.id))
               }
-              id={t}
-              onCheckedChange={(e) => onChange(t)}
+              id={t.id}
+              onCheckedChange={(e) => onChange(t.id)}
             />
-            <Label htmlFor={t} className="">
-              {t}
+            <Label htmlFor={t.id} className="">
+              {t.name}
             </Label>
           </div>
         ))}

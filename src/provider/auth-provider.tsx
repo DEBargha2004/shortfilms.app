@@ -16,28 +16,29 @@ type AuthOptions = {
   onError?: (error?: ErrorResponse) => void;
 };
 
-type User = {
+export type TUser = {
   id: string;
   avatar?: string;
   name: string;
   email: string;
+  role: string;
 };
 
 type State = {
-  user?: User;
+  user?: TUser;
 };
 type Actions = {
   signup: (
     formdata: TSignUpSchema,
-    options?: Partial<AuthOptions>
+    options?: Partial<AuthOptions>,
   ) => Promise<void>;
   signin: (
     formdata: TSigninSchema,
-    options?: Partial<AuthOptions>
+    options?: Partial<AuthOptions>,
   ) => Promise<void>;
   verifyAccount: (
     token: TOtpSchema,
-    options?: Partial<AuthOptions>
+    options?: Partial<AuthOptions>,
   ) => Promise<void>;
   signout: (options?: Partial<AuthOptions>) => Promise<void>;
 };
@@ -49,21 +50,26 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<TUser>();
   const { push } = useRouter();
 
   const signup = async (
     formdata: TSignUpSchema,
-    options?: Partial<AuthOptions>
+    options?: Partial<AuthOptions>,
   ) => {
-    if (FileVerification.isBase64(formdata.avatar)) { 
-      const [res, err] = await tryCatch<AxiosResponse<{ url: string; path: string }>, AxiosError<ErrorResponse> >(axios.get(hrefs.api.presignedUrl.userAvatar("image/webp"))); if (err) { options?.onError?.(err.response?.data);
+    if (FileVerification.isBase64(formdata.avatar)) {
+      const [res, err] = await tryCatch<
+        AxiosResponse<{ url: string; path: string }>,
+        AxiosError<ErrorResponse>
+      >(axios.get(hrefs.api.presignedUrl.userAvatar("image/webp")));
+      if (err) {
+        options?.onError?.(err.response?.data);
         formdata.avatar = "";
       }
       if (res) {
         const blob = FileVerification.base64toBlob(
           formdata.avatar!,
-          "image/webp"
+          "image/webp",
         );
         await axios.put(res.data.url, blob, {
           headers: { "Content-Type": "image/webp" },
@@ -81,7 +87,7 @@ export default function AuthProvider({
         password: formdata.password,
         name: formdata.name,
         image: formdata.avatar,
-      })
+      }),
     );
 
     if (error) {
@@ -95,16 +101,16 @@ export default function AuthProvider({
   };
   const signin = async (
     formdata: TSigninSchema,
-    options?: Partial<AuthOptions>
+    options?: Partial<AuthOptions>,
   ) => {
     const [res, error] = await tryCatch<
-      AxiosResponse<DefaultSuccessResponse & { data: User }>,
+      AxiosResponse<DefaultSuccessResponse & { data: TUser }>,
       AxiosError<ErrorResponse>
     >(
       axios.post(hrefs.api.auth.signin, {
         email: formdata.email,
         password: formdata.password,
-      })
+      }),
     );
     if (error) {
       return options?.onError?.(error.response?.data);
@@ -117,7 +123,7 @@ export default function AuthProvider({
 
   const verifyAccount = async (
     formdata: TOtpSchema,
-    options?: Partial<AuthOptions>
+    options?: Partial<AuthOptions>,
   ) => {
     const [res, error] = await tryCatch<
       AxiosResponse<DefaultSuccessResponse>,
@@ -135,7 +141,7 @@ export default function AuthProvider({
   };
   const signout = async (options?: Partial<AuthOptions>) => {
     const [res, err] = await tryCatch<
-      AxiosResponse<DefaultSuccessResponse & { data: User }>,
+      AxiosResponse<DefaultSuccessResponse & { data: TUser }>,
       AxiosError<ErrorResponse>
     >(axios.post(hrefs.api.auth.signout));
 
@@ -151,8 +157,8 @@ export default function AuthProvider({
   };
 
   useEffect(() => {
-    tryCatch<AxiosResponse<User>, AxiosError<ErrorResponse>>(
-      axios.get(hrefs.api.user.currentUser)
+    tryCatch<AxiosResponse<TUser>, AxiosError<ErrorResponse>>(
+      axios.get(hrefs.api.user.currentUser),
     ).then(([res, err]) => {
       if (res) {
         setUser(res.data);

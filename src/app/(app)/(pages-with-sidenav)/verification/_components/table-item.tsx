@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Eye, ImageIcon, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Eye, ImageIcon, MoreVertical, ShieldCheck, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { getPublishType } from "@/constants/general";
 import Link from "next/link";
@@ -30,12 +30,15 @@ import { hrefs } from "@/constants/hrefs";
 export default function TableItem({
   post,
   onDelete,
+  onUpdate,
 }: {
   post: TPostDoc;
   onDelete: (id: string) => void;
+  onUpdate: (updatedPost: TPostDoc) => void;
 }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -50,6 +53,26 @@ export default function TableItem({
     }
     toast.success("Post deleted successfully");
     onDelete(post._id);
+  };
+
+  const handleVerifyToggle = async () => {
+    setIsVerifying(true);
+    const newStatus = !post.verifiedAt;
+    const [res, err] = await tryCatch(
+      hrefs.api.post.verify.action(hrefs.api.post.verify.url(post._id), {
+        status: newStatus,
+      })
+    );
+    setIsVerifying(false);
+    
+    if (err) {
+      toast.error("Failed to update verification status");
+      return;
+    }
+    
+    toast.success("Verification status updated");
+    // Update local state without fetching again
+    onUpdate({ ...post, verifiedAt: newStatus ? new Date() : null });
   };
 
   return (
@@ -116,16 +139,18 @@ export default function TableItem({
               align="end"
               className="[&_svg]:size-4 [&_svg]:mr-2"
             >
-              <Link href={`/content/${post._id}/edit`}>
-                <DropdownMenuItem className="cursor-pointer">
-                  <Pencil /> <span>Edit</span>
-                </DropdownMenuItem>
-              </Link>
               <Link href={hrefs.post(post._id)}>
                 <DropdownMenuItem className="cursor-pointer">
-                  <Eye /> <span>View</span>
+                  <Eye /> <span>View Details</span>
                 </DropdownMenuItem>
               </Link>
+              <DropdownMenuItem 
+                onClick={handleVerifyToggle}
+                disabled={isVerifying}
+                className="cursor-pointer text-emerald-600 focus:text-emerald-600"
+              >
+                <ShieldCheck /> <span>{post.verifiedAt ? "Unverify" : "Verify"}</span>
+              </DropdownMenuItem>
               <DropdownMenuItem
                 onSelect={() => setIsDeleteDialogOpen(true)}
                 className="text-destructive focus:text-destructive cursor-pointer"

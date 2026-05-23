@@ -17,6 +17,7 @@ import {
 } from "../ui/tooltip";
 import { usePathname } from "next/navigation";
 import { useGlobalAppStore } from "@/store/global-app-store";
+import { useAuth } from "@/provider/auth-provider";
 
 export default function SideNav({
   className,
@@ -56,46 +57,50 @@ export function BottomNavMiniView({
   ...props
 }: {} & HTMLProps<HTMLDivElement>) {
   const pathname = usePathname();
+  const { user } = useAuth();
+
   return (
     <div className={cn("w-full h-fit py-1", className)} {...props}>
-      {bottomNavMiniViewItems.map((item, item_idx) => (
-        <React.Fragment key={item_idx}>
-          {item.type === "app-section-link" && (
-            <Link href={item.href} className="block sm:w-fit w-full shrink">
-              <SideNavItem
-                renderType="mini"
-                label={item.title}
-                className="gap-1 sm:w-20 w-full rounded-sm sm:px-4 px-0"
-                selected={
-                  item.catchRoutes
-                    ? item.catchRoutes.includes(pathname)
-                    : item.href === pathname
-                }
-                side="top"
+      {bottomNavMiniViewItems
+        .filter((it) => it.type === "separator" || it.canView(user?.role ?? ""))
+        .map((item, item_idx) => (
+          <React.Fragment key={item_idx}>
+            {item.type === "app-section-link" && (
+              <Link href={item.href} className="block sm:w-fit w-full shrink">
+                <SideNavItem
+                  renderType="mini"
+                  label={item.title}
+                  className="gap-1 sm:w-20 w-full rounded-sm sm:px-4 px-0"
+                  selected={
+                    item.catchRoutes
+                      ? item.catchRoutes.includes(pathname)
+                      : item.href === pathname
+                  }
+                  side="top"
+                >
+                  {<item.Icon className="h-5" />}
+                  <SideNavItemLabel className="text-xs">
+                    {item.title}
+                  </SideNavItemLabel>
+                </SideNavItem>
+              </Link>
+            )}
+            {item.type === "app-section-element" && (
+              <Link
+                href={item.href ?? ""}
+                className="inline-block sm:w-fit w-full"
               >
-                {<item.Icon className="h-5" />}
-                <SideNavItemLabel className="text-xs">
-                  {item.title}
-                </SideNavItemLabel>
-              </SideNavItem>
-            </Link>
-          )}
-          {item.type === "app-section-element" && (
-            <Link
-              href={item.href ?? ""}
-              className="inline-block sm:w-fit w-full"
-            >
-              <SideNavItem
-                renderType="mini"
-                className="gap-1 sm:w-20 w-full rounded-sm sm:px-4 px-0"
-                disableTooltip
-              >
-                {<item.Element />}
-              </SideNavItem>
-            </Link>
-          )}
-        </React.Fragment>
-      ))}
+                <SideNavItem
+                  renderType="mini"
+                  className="gap-1 sm:w-20 w-full rounded-sm sm:px-4 px-0"
+                  disableTooltip
+                >
+                  {<item.Element />}
+                </SideNavItem>
+              </Link>
+            )}
+          </React.Fragment>
+        ))}
     </div>
   );
 }
@@ -104,42 +109,46 @@ export function SideNavMiniView({
   ...props
 }: {} & HTMLProps<HTMLDivElement>) {
   const pathname = usePathname();
+  const { user } = useAuth();
+
   return (
     <div className={cn("w-full h-fit", className)} {...props}>
-      {sideNavMiniViewItems.map((item, item_idx) => (
-        <React.Fragment key={item_idx}>
-          {item.type === "app-section-link" && (
-            <Link href={item.href} className="block w-full">
-              <SideNavItem
-                renderType="mini"
-                label={item.title}
-                className="gap-1 w-full rounded-sm"
-                selected={
-                  item.catchRoutes
-                    ? item.catchRoutes.includes(pathname)
-                    : item.href === pathname
-                }
-              >
-                {<item.Icon className="h-5" />}
-                <SideNavItemLabel className="text-xs">
-                  {item.title}
-                </SideNavItemLabel>
-              </SideNavItem>
-            </Link>
-          )}
-          {item.type === "app-section-element" && (
-            <Link href={item.href ?? ""} className="block w-full">
-              <SideNavItem
-                renderType="mini"
-                className="gap-1 w-full rounded-sm"
-                disableTooltip
-              >
-                {<item.Element iconProps={{ className: "h-8 w-8" }} />}
-              </SideNavItem>
-            </Link>
-          )}
-        </React.Fragment>
-      ))}
+      {sideNavMiniViewItems
+        .filter((it) => it.type === "separator" || it.canView(user?.role ?? ""))
+        .map((item, item_idx) => (
+          <React.Fragment key={item_idx}>
+            {item.type === "app-section-link" && (
+              <Link href={item.href} className="block w-full">
+                <SideNavItem
+                  renderType="mini"
+                  label={item.title}
+                  className="gap-1 w-full rounded-sm"
+                  selected={
+                    item.catchRoutes
+                      ? item.catchRoutes.includes(pathname)
+                      : item.href === pathname
+                  }
+                >
+                  {<item.Icon className="h-5" />}
+                  <SideNavItemLabel className="text-xs">
+                    {item.title}
+                  </SideNavItemLabel>
+                </SideNavItem>
+              </Link>
+            )}
+            {item.type === "app-section-element" && (
+              <Link href={item.href ?? ""} className="block w-full">
+                <SideNavItem
+                  renderType="mini"
+                  className="gap-1 w-full rounded-sm"
+                  disableTooltip
+                >
+                  {<item.Element iconProps={{ className: "h-8 w-8" }} />}
+                </SideNavItem>
+              </Link>
+            )}
+          </React.Fragment>
+        ))}
     </div>
   );
 }
@@ -149,31 +158,36 @@ export function SideNavFullView({
   ...props
 }: {} & HTMLProps<HTMLDivElement>) {
   const pathname = usePathname();
+  const { user } = useAuth();
+
   return (
     <div className={cn(" space-y-1", className)} {...props}>
-      {sideNavFullViewItems.map((item, item_idx) => (
-        <React.Fragment key={item_idx}>
-          {item.type === "app-section-link" && (
-            <Link href={item.href} className="block w-full">
-              <SideNavItem
-                renderType="full"
-                label={item.title}
-                selected={
-                  item.catchRoutes
-                    ? item.catchRoutes.includes(pathname)
-                    : item.href === pathname
-                }
-              >
-                {<item.Icon className="h-5 font-normal" />}
-                <SideNavItemLabel className="text-sm">
-                  {item.title}
-                </SideNavItemLabel>
-              </SideNavItem>
-            </Link>
-          )}
-          {item.type === "separator" && <Separator />}
-        </React.Fragment>
-      ))}
+      {sideNavFullViewItems
+
+        .filter((it) => it.type === "separator" || it.canView(user?.role ?? ""))
+        .map((item, item_idx) => (
+          <React.Fragment key={item_idx}>
+            {item.type === "app-section-link" && (
+              <Link href={item.href} className="block w-full">
+                <SideNavItem
+                  renderType="full"
+                  label={item.title}
+                  selected={
+                    item.catchRoutes
+                      ? item.catchRoutes.includes(pathname)
+                      : item.href === pathname
+                  }
+                >
+                  {<item.Icon className="h-5 font-normal" />}
+                  <SideNavItemLabel className="text-sm">
+                    {item.title}
+                  </SideNavItemLabel>
+                </SideNavItem>
+              </Link>
+            )}
+            {item.type === "separator" && <Separator />}
+          </React.Fragment>
+        ))}
     </div>
   );
 }

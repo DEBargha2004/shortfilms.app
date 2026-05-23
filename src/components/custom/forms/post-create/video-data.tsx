@@ -25,7 +25,7 @@ import useVideoUpload from "@/hooks/use-video-upload";
 import { cn } from "@/lib/utils";
 import { TPostCreateSchema } from "@/schema/post-create";
 import { CheckCircle2, Link2, Loader2, Upload } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useFormContext, useWatch } from "react-hook-form";
 
@@ -56,7 +56,7 @@ export default function VideoData() {
       if (acceptedFiles.length) {
         const info = await uploadVideoBody(
           acceptedFiles[0],
-          hrefs.api.presignedUrl.post.shortfilm
+          hrefs.api.presignedUrl.post.shortfilm,
         );
         if (info)
           setValue("video", {
@@ -77,7 +77,7 @@ export default function VideoData() {
       if (acceptedFiles.length) {
         const info = await uploadVideoTrailer(
           acceptedFiles[0],
-          hrefs.api.presignedUrl.post.trailer
+          hrefs.api.presignedUrl.post.trailer,
         );
         if (info)
           setValue("trailer", {
@@ -198,6 +198,10 @@ export default function VideoData() {
         <VideoPreview path={video.path} libraryId={video.libraryId} />
       )}
 
+      {video.href && video.type === "link" && (
+        <YoutubePreview url={video.href ?? ""} />
+      )}
+
       <h2 className="text-lg pt-6 font-medium">Trailer</h2>
       <FormField
         control={control}
@@ -301,6 +305,10 @@ export default function VideoData() {
       {trailer.path && trailer.libraryId && (
         <VideoPreview path={trailer.path} libraryId={trailer.libraryId} />
       )}
+
+      {trailer.href && trailer.type === "link" && (
+        <YoutubePreview url={trailer.href ?? ""} />
+      )}
     </>
   );
 }
@@ -324,6 +332,62 @@ function VideoPreview({
   return (
     <iframe
       src={url}
+      loading="lazy"
+      style={{ border: "none" }}
+      allowFullScreen={true}
+      allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+      className="size-full w-[calc(100%-2px)] aspect-video"
+    ></iframe>
+  );
+}
+
+export function extractYouTubeVideoId(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+
+    // youtu.be/<id>
+    if (parsed.hostname === "youtu.be") {
+      return parsed.pathname.slice(1) || null;
+    }
+
+    // youtube.com/watch?v=<id>
+    const v = parsed.searchParams.get("v");
+    if (v) {
+      return v;
+    }
+
+    // youtube.com/embed/<id>
+    const embedMatch = parsed.pathname.match(/\/embed\/([^/?]+)/);
+    if (embedMatch) {
+      return embedMatch[1];
+    }
+
+    // youtube.com/shorts/<id>
+    const shortsMatch = parsed.pathname.match(/\/shorts\/([^/?]+)/);
+    if (shortsMatch) {
+      return shortsMatch[1];
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export function getYouTubeEmbedUrl(videoId: string): string {
+  return `https://www.youtube.com/embed/${videoId}`;
+}
+
+export function YoutubePreview({ url }: { url: string }) {
+  const embedUrl = useMemo(() => {
+    const id = extractYouTubeVideoId(url);
+    if (id) return getYouTubeEmbedUrl(id);
+    return "";
+  }, [url]);
+
+  return (
+    <iframe
+      src={embedUrl}
       loading="lazy"
       style={{ border: "none" }}
       allowFullScreen={true}

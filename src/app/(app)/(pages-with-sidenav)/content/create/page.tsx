@@ -27,14 +27,14 @@ import { use, useEffect } from "react";
 import { usePostStore } from "@/store/post-store";
 
 async function getGenres() {
-  const [res, err] = await tryCatch(hrefs.api.post.getGenres.invoke());
+  const [res, err] = await tryCatch(hrefs.api.genre.getAll.invoke());
   if (err) throw new Error(err.message);
-  return res?.data;
+  return res?.data?.data;
 }
 async function getTechniques() {
-  const [res, err] = await tryCatch(hrefs.api.post.getTechniques.invoke());
+  const [res, err] = await tryCatch(hrefs.api.technique.getAll.invoke());
   if (err) throw new Error(err.message);
-  return res?.data;
+  return res?.data?.data;
 }
 
 export default function Page() {

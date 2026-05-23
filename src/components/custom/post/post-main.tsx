@@ -16,14 +16,15 @@ export default function PostMain({
 }) {
   return (
     <VideoContaner className="grid gap-3 @container h-fit" id="post-main">
-      <VideoPlayer
-        libraryId={post.video.libraryId!}
-        videoId={post.video.path!}
-      />
+      <VideoPlayer video={post.video} />
       <VideoTitle>{post.title}</VideoTitle>
       <div className="flex flex-wrap justify-between items-center gap-5">
         <div className="flex @2xl:justify-start justify-between gap-4 items-center @2xl:w-fit w-full shrink-0">
-          <ChannelOverview image="" subscribers={1234} title={post.user.name} />
+          <ChannelOverview
+            image=""
+            subscribers={1234}
+            title={post.user?.name}
+          />
           <div className="flex justify-end items-start gap-2">
             <Button className="rounded-full">Subscribe</Button>
           </div>

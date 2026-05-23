@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { ListFilter, PlusCircle, Search } from "lucide-react";
+import { ListFilter, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -40,24 +39,37 @@ type FieldType = { label: string; value: string };
 
 const filter: FieldType[] = [
   { label: "Latest", value: "latest" },
-  { label: "Popular", value: "popular" },
-  { label: "Oldest", value: "oldest" },
+  { label: "Pending", value: "pending" },
+  { label: "Verified", value: "verified" },
 ];
 
-export default function Content() {
+export default function Verification() {
   const [selectedFilter, setSelectedFilter] = useState(filter[0].value);
   const [posts, setPosts] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     (async function () {
       const [res, err] = await tryCatch<
         AxiosResponse,
         AxiosError<DefaultError>
-      >(hrefs.api.post.getAll.action(hrefs.api.post.getAll.url));
+      >(hrefs.api.post.adminAll.action(hrefs.api.post.adminAll.url));
       if (err) return toast.error(err.code);
       setPosts(res?.data ?? []);
     })();
   }, []);
+
+  const displayedPosts = posts.filter((p) => {
+    // Filter by text
+    if (search && !p.title.toLowerCase().includes(search.toLowerCase())) return false;
+    
+    // Filter by verification status
+    if (selectedFilter === "pending" && p.verifiedAt) return false;
+    if (selectedFilter === "verified" && !p.verifiedAt) return false;
+    
+    return true;
+  });
+
   return (
     <div className="flex h-full w-full flex-col overflow-y-auto scroller">
       <div className="flex flex-col sm:gap-4 sm:p-0 p-1">
@@ -66,31 +78,17 @@ export default function Content() {
             <div className="flex sm:flex-row flex-col items-center justify-between gap-2 ">
               <div className="flex gap-2 items-center justify-start sm:w-fit w-full">
                 <TabsList className="bg-card">
-                  <TabsTrigger value="all">All</TabsTrigger>
-                  <TabsTrigger value="public">Public</TabsTrigger>
-                  <TabsTrigger value="private">Private</TabsTrigger>
-                  <TabsTrigger value="draft">Draft</TabsTrigger>
+                  <TabsTrigger value="all">All Content</TabsTrigger>
                 </TabsList>
               </div>
-              <div className="flex justify-between items-center gap-2 w-full">
-                <Link href={"/content/create"} className=" inline">
-                  <Button
-                    size="sm"
-                    variant={"success"}
-                    className="h-8 gap-1 rounded-sm"
-                  >
-                    <PlusCircle className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      Add Post
-                    </span>
-                  </Button>
-                </Link>
-
+              <div className="flex justify-end items-center gap-2 w-full">
                 <div className="relative md:grow-0 md:w-fit w-[200px] flex justify-between items-center gap-2">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
-                    placeholder="Search..."
+                    placeholder="Search posts..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
                     className="w-full rounded-lg pl-8 md:w-[200px] lg:w-[336px] h-8"
                   />
                   <DropdownMenu>
@@ -107,10 +105,10 @@ export default function Content() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="bg-card">
-                      <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                      <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       {filter.map((item) => (
-                        <DropdownMenuCheckboxItem
+                         <DropdownMenuCheckboxItem
                           key={item.value}
                           onClick={() => setSelectedFilter(item.value)}
                           checked={selectedFilter === item.value}
@@ -127,9 +125,9 @@ export default function Content() {
             <TabsContent value="all">
               <Card x-chunk="dashboard-06-chunk-0" className="bg-card">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-xl">Content</CardTitle>
+                  <CardTitle className="text-xl">Content Verification</CardTitle>
                   <CardDescription>
-                    Manage your posts and view their performance.
+                    Review and verify creator posts to publish them to the public feed.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -159,10 +157,15 @@ export default function Content() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {posts.map((p) => (
+                      {displayedPosts.map((p) => (
                         <TableItem
                           key={p._id}
                           post={p}
+                          onUpdate={(updated) => 
+                            setPosts((prev) => 
+                              prev.map((post) => post._id === updated._id ? updated : post)
+                            )
+                          }
                           onDelete={(deletedId) =>
                             setPosts((prev) =>
                               prev.filter((post) => post._id !== deletedId)
@@ -175,7 +178,7 @@ export default function Content() {
                 </CardContent>
                 <CardFooter className="">
                   <div className="text-xs text-muted-foreground">
-                    Showing <strong>1-10</strong> of <strong>32</strong> Posts
+                    Showing <strong>{displayedPosts.length > 0 ? 1 : 0}-{Math.min(10, displayedPosts.length)}</strong> of <strong>{displayedPosts.length}</strong> Posts
                   </div>
                 </CardFooter>
               </Card>

@@ -6,7 +6,7 @@ export const premiereStatus: string[] = [
 
 export const ageRating: string[] = ["ALL AUDIENCES", "AGES 13+", "MATURE"];
 
-export const genres = [
+export const genres: string[] = [
   "Action",
   "Adventure",
   "Animation",
@@ -53,6 +53,11 @@ export const techniques: string[] = [
   "VR/360",
 ];
 
+// Publishing Types
+export const PUBLISHING_TYPES = ["public", "private", "unlisted"] as const;
+
+export type PublishingType = (typeof PUBLISHING_TYPES)[number];
+
 export const publishingTypes = [
   {
     label: "Public",
@@ -66,22 +71,27 @@ export const publishingTypes = [
     label: "Unlisted",
     value: "unlisted",
   },
-] as const;
+] as const satisfies readonly { value: PublishingType; label: string }[];
 
 export const getPublishType = (val: string) =>
   publishingTypes.find((p) => p.value === val);
 
 export const publicPublishing = publishingTypes.find(
-  (type) => type.value === "public"
+  (type) => type.value === "public",
 )!;
 
 export const privatePublishing = publishingTypes.find(
-  (type) => type.value === "private"
+  (type) => type.value === "private",
 )!;
 
 export const unlistedPublishing = publishingTypes.find(
-  (type) => type.value === "unlisted"
+  (type) => type.value === "unlisted",
 )!;
+
+// Video Upload Types
+export const VIDEO_UPLOAD_TYPES = ["link", "file", "drive"] as const;
+
+export type VideoUploadType = (typeof VIDEO_UPLOAD_TYPES)[number];
 
 export const videoUploadTypes = [
   {
@@ -96,18 +106,16 @@ export const videoUploadTypes = [
     label: "Google Drive",
     value: "drive",
   },
-] as const;
+] as const satisfies readonly { value: VideoUploadType; label: string }[];
 
-export const videoUploadTypesIds = videoUploadTypes.map((type) => type.value);
-export type VideoUploadType = (typeof videoUploadTypesIds)[number];
 export const videoUploadTypeLink = videoUploadTypes.find(
-  (type) => type.value === "link"
+  (type) => type.value === "link",
 )!;
 export const videoUploadTypeFile = videoUploadTypes.find(
-  (type) => type.value === "file"
+  (type) => type.value === "file",
 )!;
 export const videoUploadTypeDrive = videoUploadTypes.find(
-  (type) => type.value === "drive"
+  (type) => type.value === "drive",
 )!;
 
 export const creditRoles = [

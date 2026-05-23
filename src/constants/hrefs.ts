@@ -1,22 +1,25 @@
-import { Category } from "@/types/post";
 import axios from "axios";
 import { Post } from "../../../backend/src/modules/post/entities/post.entity";
 import { Doc } from "../../../backend/src/types/doc";
 import { User } from "../../../backend/src/modules/user/user.entity";
+import { Genre, Technique } from "@/types/post";
 
-type FeedGroup = Category & { contents: any[] };
+type FeedGroup = Genre & { contents: any[] };
 export type TPresignedUrl = { url: string; path: string };
 
 export const hrefs = {
   home: "/",
   post: (id: string) => `/post/${id}`,
   user: (username: string) =>
-    username.startsWith("@") ? username : `/@${username}`,
+    username?.startsWith("@") ? username : `/@${username}`,
   shorts: "/shorts",
   subscriptions: "/subscriptions",
   library: "/library",
   explore: "/explore",
   content: "/content",
+  verification: "/verification",
+  genres: "/genres",
+  techniques: "/techniques",
   auth: {
     signin: "/auth/signin",
     signup: "/auth/signup",
@@ -40,7 +43,7 @@ export const hrefs = {
           invoke: function (mimetype: string) {
             console.log(this);
             return hrefs.api.presignedUrl.post.thumbnail.action<TPresignedUrl>(
-              hrefs.api.presignedUrl.post.thumbnail.url(mimetype)
+              hrefs.api.presignedUrl.post.thumbnail.url(mimetype),
             );
           },
         },
@@ -51,7 +54,7 @@ export const hrefs = {
           action: axios.get,
           invoke: function (mimetype: string) {
             return hrefs.api.presignedUrl.post.gallery.action<TPresignedUrl>(
-              hrefs.api.presignedUrl.post.gallery.url(mimetype)
+              hrefs.api.presignedUrl.post.gallery.url(mimetype),
             );
           },
         },
@@ -91,7 +94,7 @@ export const hrefs = {
         action: axios.get,
         invoke: function (id: string, origin?: string) {
           return this.action<Doc<Post & { user: Doc<User> }>>(
-            this.url(id, origin)
+            this.url(id, origin),
           );
         },
       },
@@ -103,26 +106,25 @@ export const hrefs = {
         url: (id: string) => `/api/v1/post/creator/${id}`,
         action: axios.get,
       },
-      getGenres: {
-        url: `/api/v1/post/categories/genre`,
+      adminAll: {
+        url: `/api/v1/post/admin/all`,
         action: axios.get,
-        invoke: function () {
-          return this.action<Category[]>(this.url);
-        },
       },
-      getTechniques: {
-        url: `/api/v1/post/categories/technique`,
-        action: axios.get,
-        invoke: function () {
-          return this.action<Category[]>(this.url);
-        },
+      verify: {
+        url: (id: string) => `/api/v1/post/${id}/verify`,
+        action: axios.put,
       },
+      delete: {
+        url: (id: string) => `/api/v1/post/${id}`,
+        action: axios.delete,
+      },
+
       feed: {
         url: `/api/v1/post/feed`,
         action: axios.get,
         invoke: function (origin?: string) {
           return this.action<FeedGroup[]>(
-            origin ? `${origin}${this.url}` : this.url
+            origin ? `${origin}${this.url}` : this.url,
           );
         },
       },
@@ -137,6 +139,56 @@ export const hrefs = {
         action: axios.get,
       },
     },
+    genre: {
+      create: {
+        url: `/api/v1/post/genre`,
+        action: axios.post,
+      },
+      update: {
+        url: (id: string) => `/api/v1/post/genre/${id}`,
+        action: axios.put,
+      },
+      getAll: {
+        url: `/api/v1/post/genre/all`,
+        action: axios.get,
+        invoke: function () {
+          return this.action<{ data: Genre[] }>(this.url);
+        },
+      },
+      getOne: {
+        url: (id: string) => `/api/v1/post/genre/${id}`,
+        action: axios.get,
+      },
+      delete: {
+        url: (id: string) => `/api/v1/post/genre/${id}`,
+        action: axios.delete,
+      },
+    },
+    technique: {
+      create: {
+        url: `/api/v1/post/technique`,
+        action: axios.post,
+      },
+      update: {
+        url: (id: string) => `/api/v1/post/technique/${id}`,
+        action: axios.put,
+      },
+      getAll: {
+        url: `/api/v1/post/technique/all`,
+        action: axios.get,
+        invoke: function () {
+          return this.action<{ data: Technique[] }>(this.url);
+        },
+      },
+      getOne: {
+        url: (id: string) => `/api/v1/post/technique/${id}`,
+        action: axios.get,
+      },
+      delete: {
+        url: (id: string) => `/api/v1/post/technique/${id}`,
+        action: axios.delete,
+      },
+    },
     stream: {
       manifest: (videoId: string) => `/api/v1/stream/${videoId}/manifest.mpd`,
       segments: (videoId: string, path: string) =>
@@ -146,6 +198,15 @@ export const hrefs = {
       fetch: {
         url: (query: string) => `/api/v1/site-metadata?url=${query}`,
         action: axios.get,
+      },
+    },
+    authorization: {
+      appPages: {
+        url: `/api/v1/authorization/app-pages`,
+        action: axios.get,
+        invoke: function () {
+          return this.action<string[]>(this.url);
+        },
       },
     },
   },

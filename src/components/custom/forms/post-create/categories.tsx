@@ -33,12 +33,12 @@ export default function Categories() {
 
   const handleToggle = (
     key: "categories.genres" | "categories.techniques",
-    value: string
+    value: string,
   ) => {
     if (getValues(key).includes(value)) {
       setValue(
         key,
-        getValues(key).filter((v) => v !== value)
+        getValues(key).filter((v) => v !== value),
       );
     } else {
       setValue(key, getValues(key).concat(value));
@@ -57,7 +57,7 @@ export default function Categories() {
   const handleRemoveTopic = (topic: string) => {
     setValue(
       "categories.tags",
-      getValues("categories.tags").filter((t) => t !== topic)
+      getValues("categories.tags").filter((t) => t !== topic),
     );
   };
   return (
@@ -66,7 +66,7 @@ export default function Categories() {
         title="GENRE"
         name="categories.genres"
         description={`Select up to ${MAX_SELECTABLE_GENRES}`}
-        list={genres?.map((g) => g.name) || []}
+        list={genres?.map((g) => ({ id: g.id, name: g.name })) || []}
         selected={selectedGenres}
         maxSelectable={MAX_SELECTABLE_GENRES}
         onChange={(e) => handleToggle("categories.genres", e)}
@@ -75,7 +75,7 @@ export default function Categories() {
         title="TECHNIQUE"
         name="categories.techniques"
         description={`Select up to ${MAX_SELECTABLE_TECHNIQUES}`}
-        list={techniques?.map((t) => t.name) || []}
+        list={techniques?.map((t) => ({ id: t.id, name: t.name })) || []}
         selected={selectedTechniques}
         maxSelectable={MAX_SELECTABLE_TECHNIQUES}
         onChange={(e) => handleToggle("categories.techniques", e)}
