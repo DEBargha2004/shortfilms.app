@@ -71,7 +71,7 @@ export function VideoPlayerProvider({
   const [isBuffering, setIsBuffering] = useState(false);
   const [isPlayerInitialised, setIsPlayerInitialised] = useState(false);
 
-  const dashjsPlayer = useRef<MediaPlayerClass>();
+  const dashjsPlayer = useRef<MediaPlayerClass | null>(null);
   const playerContainerRef = useRef<HTMLDivElement>(null);
 
   async function play() {
@@ -164,7 +164,7 @@ export function VideoPlayerProvider({
     setAutoBitrateSwitching({ video: false, audio: false });
     setActiveBitrate(id);
     console.log(id);
-    dashjsPlayer.current?.setRepresentationForTypeById("video", id);
+    dashjsPlayer.current?.setRepresentationForTypeById("video", id.toString());
   }
 
   useEffect(() => {

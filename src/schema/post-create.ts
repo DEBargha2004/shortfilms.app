@@ -24,7 +24,7 @@ export const postCreateSchema = z.object({
     type: z.enum(VIDEO_UPLOAD_TYPES),
   }),
   details: z.object({
-    duration: z.coerce.string({ required_error: "Duration can't be empty" }),
+    duration: z.string("Duration can't be empty"),
     country: z.string().min(1),
     language: z.string().min(1),
     premiereStatus: z.string().min(1),

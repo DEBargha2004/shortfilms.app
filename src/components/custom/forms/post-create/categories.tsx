@@ -51,7 +51,9 @@ export default function Categories() {
     if (!topicTemp) return;
     setValue("categories.tags", [topicTemp, ...getValues("categories.tags")]);
 
-    topicInputRef.current.value = "";
+    if (topicInputRef.current) {
+      topicInputRef.current.value = "";
+    }
   };
 
   const handleRemoveTopic = (topic: string) => {

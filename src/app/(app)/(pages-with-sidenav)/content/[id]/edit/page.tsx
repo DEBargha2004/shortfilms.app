@@ -31,7 +31,7 @@ import useFileUpload from "@/hooks/use-file-upload";
 export default function Page() {
   const params = useParams<{ id: string }>();
   const form = useForm<TPostCreateSchema>({
-    resolver: zodResolver(postCreateSchema),
+    resolver: zodResolver(postCreateSchema) as any,
     defaultValues: defaultValues(),
   });
 

@@ -8,6 +8,8 @@ import { hrefs } from "@/constants/hrefs";
 import { env } from "@/lib/env";
 import { tryCatch } from "@/lib/utils";
 
+export const revalidate = 600;
+
 export default async function Home() {
   const [res, err] = await tryCatch(
     hrefs.api.post.feed.invoke(env.NEXT_PUBLIC_API_URL),

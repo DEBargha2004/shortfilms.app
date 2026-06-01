@@ -39,7 +39,7 @@ async function getTechniques() {
 
 export default function Page() {
   const form = useForm<TPostCreateSchema>({
-    resolver: zodResolver(postCreateSchema),
+    resolver: zodResolver(postCreateSchema) as any,
     defaultValues: defaultValues(),
   });
 
