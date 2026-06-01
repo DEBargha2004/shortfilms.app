@@ -1,11 +1,15 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { Post } from "../../../backend/src/modules/post/entities/post.entity";
 import { Doc } from "../../../backend/src/types/doc";
 import { User } from "../../../backend/src/modules/user/user.entity";
 import { Genre, Technique } from "@/types/post";
+import { Comment } from "../../../backend/src/modules/comment/entities/comment.entity";
 
 type FeedGroup = Genre & { contents: any[] };
 export type TPresignedUrl = { url: string; path: string };
+export type TCommentPopulated = Doc<
+  Omit<Comment, "user"> & { user: Pick<User, "name" | "image"> & { _id: string } }
+>;
 
 export const hrefs = {
   home: "/",
@@ -92,10 +96,19 @@ export const hrefs = {
         url: (id: string, origin?: string) =>
           `${origin ?? ""}/api/v1/post/${id}`,
         action: axios.get,
-        invoke: function (id: string, origin?: string) {
-          return this.action<Doc<Post & { user: Doc<User> }>>(
-            this.url(id, origin),
-          );
+        invoke: function (
+          id: string,
+          origin?: string,
+          config?: AxiosRequestConfig,
+        ) {
+          return this.action<
+            Doc<
+              Post & {
+                user: Doc<User>;
+                userReaction?: "like" | "dislike" | null;
+              }
+            >
+          >(this.url(id, origin), config);
         },
       },
       getAll: {
@@ -126,6 +139,40 @@ export const hrefs = {
           return this.action<FeedGroup[]>(
             origin ? `${origin}${this.url}` : this.url,
           );
+        },
+      },
+      react: {
+        url: (id: string) => `/api/v1/post/${id}/react`,
+        action: axios.post,
+        invoke: function (id: string, type: "like" | "dislike" | null) {
+          return this.action<{
+            likesCount: number;
+            dislikesCount: number;
+            userReaction: "like" | "dislike" | null;
+          }>(this.url(id), { type });
+        },
+      },
+    },
+    comment: {
+      create: {
+        url: `/api/v1/comment`,
+        action: axios.post,
+        invoke: function (postId: string, content: string) {
+          return this.action<TCommentPopulated>(this.url, { postId, content });
+        },
+      },
+      getByPost: {
+        url: (postId: string) => `/api/v1/comment/post/${postId}`,
+        action: axios.get,
+        invoke: function (postId: string) {
+          return this.action<{ data: TCommentPopulated[] }>(this.url(postId));
+        },
+      },
+      delete: {
+        url: (id: string) => `/api/v1/comment/${id}`,
+        action: axios.delete,
+        invoke: function (id: string) {
+          return this.action<{ message: string }>(this.url(id));
         },
       },
     },

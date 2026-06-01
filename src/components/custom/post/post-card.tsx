@@ -13,7 +13,7 @@ import { Post } from "../../../../../backend/src/modules/post/entities/post.enti
 import { Doc } from "../../../../../backend/src/types/doc";
 import { User } from "../../../../../backend/src/modules/user/user.entity";
 
-type TPost = Doc<Post> & { user: Doc<User> };
+export type TPost = Doc<Post> & { user: Doc<User> };
 
 export default function PostCard({
   post,

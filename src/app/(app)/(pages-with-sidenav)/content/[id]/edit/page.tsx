@@ -69,20 +69,47 @@ export default function Page() {
         });
       }
 
+      const data = res?.data;
       form.reset({
         ...form.getValues(),
-        title: res?.data.title,
-        description: res?.data.description,
-        video: res?.data.video,
-        trailer: res?.data.trailer,
-        categories: res?.data.categories,
-        credits: res?.data.credits,
-        thumbnail: res?.data.thumbnail,
-        playlist: res?.data.playlist,
-        press: res?.data.press,
-        publishingOption: res?.data.publishingOption,
-        schedulingOption: res?.data.schedulingOption,
-        details: res?.data.details,
+        title: data?.title,
+        description: data?.description,
+        video: data?.video,
+        trailer: data?.trailer,
+        categories: data?.categories
+          ? {
+              genres: data.categories.genres.map((g) => g.toString()),
+              techniques: data.categories.techniques.map((t) => t.toString()),
+              tags: data.categories.tags || [],
+            }
+          : undefined,
+        credits: data?.credits,
+        thumbnail: data?.thumbnail,
+        playlist: data?.playlist,
+        press: data?.press,
+        publishingOption: data?.publishingOption,
+        schedulingOption: data?.schedulingOption,
+        details: data?.details
+          ? {
+              duration: data.details.duration,
+              country: data.details.country,
+              language: data.details.language,
+              premiereStatus: data.details.premiereStatus,
+              completionDate: data.details.completionDate
+                ? new Date(data.details.completionDate)
+                : undefined,
+              ageRating: data.details.ageRating,
+              softwareUsed: data.details.softwareUsed || [],
+              pricing: data.details.pricing
+                ? {
+                    isPaid: data.details.pricing.isPaid,
+                    price: data.details.pricing.price
+                      ? parseFloat(data.details.pricing.price)
+                      : undefined,
+                  }
+                : undefined,
+            }
+          : undefined,
       });
     })();
   }, []);

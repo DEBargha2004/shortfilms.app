@@ -25,8 +25,14 @@
       "@/*": [
         "./src/*"
       ],
-      "shaka-player" : ["./src/types/shaka-player/global.d.ts"]
+      "shaka-player" : ["./src/types/shaka-player/global.d.ts"],
+      "src/modules/*": ["../backend/src/modules/*"],
+      "src/types/*": ["../backend/src/types/*"],
+      "src/common/*": ["../backend/src/common/*"]
     },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
     "target": "ES2017"
   },
   "include": [
