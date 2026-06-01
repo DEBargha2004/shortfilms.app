@@ -24,7 +24,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { TPostDoc } from "@/../../backend/src/modules/post/entities/post.entity";
+import { TPostDoc } from "@/types/db";
 import useUploadPost from "@/hooks/use-upload-post";
 import useFileUpload from "@/hooks/use-file-upload";
 

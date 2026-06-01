@@ -22,7 +22,7 @@ import { Eye, ImageIcon, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { getPublishType } from "@/constants/general";
 import Link from "next/link";
-import { TPostDoc } from "@/../../backend/src/modules/post/entities/post.entity";
+import { TPostDoc } from "@/types/db";
 import { toast } from "sonner";
 import { tryCatch } from "@/lib/utils";
 import { hrefs } from "@/constants/hrefs";

@@ -9,9 +9,7 @@ import { hrefs } from "@/constants/hrefs";
 import { MoreVertical } from "lucide-react";
 import { templateClass } from "@/constants/template-class";
 import { getThumbnailUrl } from "@/functions/get-url";
-import { Post } from "../../../../../backend/src/modules/post/entities/post.entity";
-import { Doc } from "../../../../../backend/src/types/doc";
-import { User } from "../../../../../backend/src/modules/user/user.entity";
+import { Post, Doc, User } from "@/types/db";
 
 export type TPost = Doc<Post> & { user: Doc<User> };
 

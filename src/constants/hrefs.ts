@@ -1,9 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { Post } from "../../../backend/src/modules/post/entities/post.entity";
-import { Doc } from "../../../backend/src/types/doc";
-import { User } from "../../../backend/src/modules/user/user.entity";
 import { Genre, Technique } from "@/types/post";
-import { Comment } from "../../../backend/src/modules/comment/entities/comment.entity";
+import { Post, Doc, User, Comment } from "@/types/db";
 
 type FeedGroup = Genre & { contents: any[] };
 export type TPresignedUrl = { url: string; path: string };

@@ -25,10 +25,7 @@
       "@/*": [
         "./src/*"
       ],
-      "shaka-player" : ["./src/types/shaka-player/global.d.ts"],
-      "src/modules/*": ["../backend/src/modules/*"],
-      "src/types/*": ["../backend/src/types/*"],
-      "src/common/*": ["../backend/src/common/*"]
+      "shaka-player" : ["./src/types/shaka-player/global.d.ts"]
     },
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
